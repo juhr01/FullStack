@@ -1,11 +1,23 @@
 import { useState } from 'react'
 
-const Display = (props) => {
-    return (    <div>
+const Statistics = (props) => {
+  if (props.stats1 + props.stats2 + props.stats3 == 0) {
+    return (
+      <div>
+        <h1>statistics</h1>
+        <p>No feedback given </p>
+      </div>
+    )
+  }
+    return (
+    <div>
       <h1>statistics</h1>
-      <p>{props.option1} {props.stats1}</p>
-      <p>{props.option2} {props.stats2}</p>
-      <p>{props.option3} {props.stats3}</p>
+      <p>good {props.stats1}</p>
+      <p>neutral {props.stats2}</p>
+      <p>bad {props.stats3}</p>
+      <p>all {props.allStats}</p>
+      <p>average {props.average}</p>
+      <p>positive {props.positive}</p>
     </div>
     )
   }
@@ -33,7 +45,7 @@ const App = () => {
       <Button handleClick={increaseGood} text='good'/>
       <Button handleClick={increaseNeutral} text='neutral'/>
       <Button handleClick={increaseBad} text='bad'/>
-      <Display option1='good' option2='neutral' option3='bad' stats1={good} stats2={neutral} stats3={bad}/>
+      <Statistics stats1={good} stats2={neutral} stats3={bad} allStats={good + neutral + bad} average={(good * 1 + bad * -1)/(good + neutral + bad)} positive={good/(good + neutral + bad)*100 + ' %'}/>
     </div>
   )
 }
