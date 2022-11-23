@@ -12,12 +12,12 @@ const Statistics = (props) => {
     return (
     <div>
       <h1>statistics</h1>
-      <p>good {props.stats1}</p>
-      <p>neutral {props.stats2}</p>
-      <p>bad {props.stats3}</p>
-      <p>all {props.allStats}</p>
-      <p>average {props.average}</p>
-      <p>positive {props.positive}</p>
+      <StatisticsLine text='good' value={props.stats1}/>
+      <StatisticsLine text='neutral' value={props.stats2}/>
+      <StatisticsLine text='bad' value={props.stats3}/>
+      <StatisticsLine text='all' value={props.stats1 + props.stats2 + props.stats3}/>
+      <StatisticsLine text='average' value={(props.stats1 * 1 + props.stats3 * -1)/(props.stats1 + props.stats2 + props.stats3)}/>
+      <StatisticsLine text='positive' value={props.stats1/(props.stats1 + props.stats2 + props.stats3) * 100 + ' %'}/>
     </div>
     )
   }
@@ -28,6 +28,11 @@ const Button = ({ handleClick, text }) => (
   </button>
 )
 
+const StatisticsLine = (props) => {
+  return (
+    <p>{props.text} {props.value}</p>
+  )
+}
 
 const App = () => {
   // tallenna napit omaan tilaansa
@@ -45,7 +50,7 @@ const App = () => {
       <Button handleClick={increaseGood} text='good'/>
       <Button handleClick={increaseNeutral} text='neutral'/>
       <Button handleClick={increaseBad} text='bad'/>
-      <Statistics stats1={good} stats2={neutral} stats3={bad} allStats={good + neutral + bad} average={(good * 1 + bad * -1)/(good + neutral + bad)} positive={good/(good + neutral + bad)*100 + ' %'}/>
+      <Statistics stats1={good} stats2={neutral} stats3={bad}/>
     </div>
   )
 }
