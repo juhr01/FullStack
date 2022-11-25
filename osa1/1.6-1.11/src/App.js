@@ -9,38 +9,44 @@ const Statistics = (props) => {
       </div>
     )
   }
-    return (
+  return (
     <div>
-      <th>
-        <h1>statistics</h1>
-      </th>
-      <tr>
-        <StatisticsLine content='good'/>
-        <StatisticsLine content={props.stats1}/>
-      </tr>
-      <tr>
-        <StatisticsLine content='neutral'/>
-        <StatisticsLine content={props.stats2}/>
-      </tr>
-      <tr>
-        <StatisticsLine content='bad'/>
-        <StatisticsLine content={props.stats3}/>
-      </tr>
-      <tr>
-       <StatisticsLine content='all'/>
-        <StatisticsLine content={props.stats1 + props.stats2 + props.stats3}/>
-      </tr>
-      <tr>
-        <StatisticsLine content='average'/>
-        <StatisticsLine content={(props.stats1 * 1 + props.stats3 * -1)/(props.stats1 + props.stats2 + props.stats3)}/>
-      </tr>
-      <tr>
-        <StatisticsLine content='positive'/>
-        <StatisticsLine content={props.stats1/(props.stats1 + props.stats2 + props.stats3) * 100 + ' %'}/>
-      </tr>
+      <table>
+        <tbody>
+        <tr>
+          <th>
+            <h1>statistics</h1>
+          </th>
+        </tr>
+        <tr>
+          <StatisticsLine content='good' />
+          <StatisticsLine content={props.stats1} />
+        </tr>
+        <tr>
+          <StatisticsLine content='neutral' />
+          <StatisticsLine content={props.stats2} />
+        </tr>
+        <tr>
+          <StatisticsLine content='bad' />
+          <StatisticsLine content={props.stats3} />
+        </tr>
+        <tr>
+          <StatisticsLine content='all' />
+          <StatisticsLine content={props.stats1 + props.stats2 + props.stats3} />
+        </tr>
+        <tr>
+          <StatisticsLine content='average' />
+          <StatisticsLine content={(props.stats1 * 1 + props.stats3 * -1) / (props.stats1 + props.stats2 + props.stats3)} />
+        </tr>
+        <tr>
+          <StatisticsLine content='positive' />
+          <StatisticsLine content={props.stats1 / (props.stats1 + props.stats2 + props.stats3) * 100 + ' %'} />
+        </tr>
+        </tbody>
+      </table>
     </div>
-    )
-  }
+  )
+}
 
 const Button = ({ handleClick, text }) => (
   <button onClick={handleClick}>
@@ -67,10 +73,10 @@ const App = () => {
   return (
     <div>
       <h1>give feedback</h1>
-      <Button handleClick={increaseGood} text='good'/>
-      <Button handleClick={increaseNeutral} text='neutral'/>
-      <Button handleClick={increaseBad} text='bad'/>
-      <Statistics stats1={good} stats2={neutral} stats3={bad}/>
+      <Button handleClick={increaseGood} text='good' />
+      <Button handleClick={increaseNeutral} text='neutral' />
+      <Button handleClick={increaseBad} text='bad' />
+      <Statistics stats1={good} stats2={neutral} stats3={bad} />
     </div>
   )
 }
