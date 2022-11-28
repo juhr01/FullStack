@@ -1,77 +1,55 @@
 import { useState } from 'react'
 
-const Statistics = (props) => {
-  if (props.stats1 + props.stats2 + props.stats3 == 0) {
-    return (
-      <div>
-        <h1>statistics</h1>
-        <p>No feedback given </p>
-      </div>
-    )
-  }
-    return (
-    <div>
-      <th>
-        <h1>statistics</h1>
-      </th>
-      <tr>
-        <StatisticsLine content='good'/>
-        <StatisticsLine content={props.stats1}/>
-      </tr>
-      <tr>
-        <StatisticsLine content='neutral'/>
-        <StatisticsLine content={props.stats2}/>
-      </tr>
-      <tr>
-        <StatisticsLine content='bad'/>
-        <StatisticsLine content={props.stats3}/>
-      </tr>
-      <tr>
-       <StatisticsLine content='all'/>
-        <StatisticsLine content={props.stats1 + props.stats2 + props.stats3}/>
-      </tr>
-      <tr>
-        <StatisticsLine content='average'/>
-        <StatisticsLine content={(props.stats1 * 1 + props.stats3 * -1)/(props.stats1 + props.stats2 + props.stats3)}/>
-      </tr>
-      <tr>
-        <StatisticsLine content='positive'/>
-        <StatisticsLine content={props.stats1/(props.stats1 + props.stats2 + props.stats3) * 100 + ' %'}/>
-      </tr>
-    </div>
-    )
-  }
-
 const Button = ({ handleClick, text }) => (
   <button onClick={handleClick}>
     {text}
   </button>
 )
 
-const StatisticsLine = (props) => {
-  return (
-    <td>{props.content}</td>
-  )
-}
-
 const App = () => {
-  // tallenna napit omaan tilaansa
-  const [good, setGood] = useState(0)
-  const [neutral, setNeutral] = useState(0)
-  const [bad, setBad] = useState(0)
+  const anecdotes = [
+    'If it hurts, do it more often.',
+    'Adding manpower to a late software project makes it later!',
+    'The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
+    'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
+    'Premature optimization is the root of all evil.',
+    'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
+    'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when dianosing patients.'
+  ]
 
-  const increaseGood = () => setGood(good + 1)
-  const increaseNeutral = () => setNeutral(neutral + 1)
-  const increaseBad = () => setBad(bad + 1)
+  const [selected, setSelected] = useState(0)
+  const [votes, setVotes] = useState(Array(anecdotes.length).fill(0))
+  const [mostVoted, setMostVoted] = useState("");
+
+  
+  const changeAnecdote = () => {
+    setSelected(Math.floor(Math.random() * anecdotes.length))
+  }
+
+  const vote = () => {
+   const copy = [...votes]
+   copy[selected] += 1
+   setVotes(copy)
+
+   if (votes[selected] > votes[mostVoted]) {
+    setMostVoted(selected);
+  }
+  }
 
   return (
     <div>
-      <h1>give feedback</h1>
-      <Button handleClick={increaseGood} text='good'/>
-      <Button handleClick={increaseNeutral} text='neutral'/>
-      <Button handleClick={increaseBad} text='bad'/>
-      <Statistics stats1={good} stats2={neutral} stats3={bad}/>
+      <h1>Anecdote of the day</h1>
+      {anecdotes[selected]}
+      <br/>
+      has {votes[selected]} points
+      <br/>
+      <Button handleClick={() => (vote(), console.log(votes))} text={'vote'}/>
+      <Button handleClick={changeAnecdote} text={'next anecdote'}/>
+      <h1>Anecdote with most votes</h1>
+      {anecdotes[mostVoted]}
+      
     </div>
+    
   )
 }
 
