@@ -46,10 +46,6 @@ const App = () => {
     if (copy[selected] >= copy[mostVoted]) {
       setMostVoted(selected);
     }
-    console.log(votes)
-    console.log('votes of selected anecdote ' + votes[selected])
-    console.log(anecdotes[mostVoted])
-    console.log('mostVoted ' + mostVoted)
   }
 
   return (
