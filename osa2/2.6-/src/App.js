@@ -23,7 +23,6 @@ const App = () => {
   }
 
   const handleNameChange = (event) => {
-    console.log(event.target.value)
     setNewName(event.target.value)
   }
 
@@ -38,14 +37,14 @@ const App = () => {
           <button type="submit">add</button>
         </div>
       </form>
+      
+      <br />
+      <h2>Numbers</h2>
       <div>
         {persons.map(person =>
           <Person key={person.name} name={person.name} />
         )}
       </div>
-      <br />
-      <h2>Numbers</h2>
-      debug: {newName}
     </div>
   )
 
