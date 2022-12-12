@@ -1,5 +1,6 @@
 import Note from './components/Note'
 import { useState } from 'react'
+import Axios from 'axios'
 
 const App = (props) => {
   const [notes, setNotes] = useState(props.notes)
@@ -27,6 +28,8 @@ const App = (props) => {
     console.log(event.target.value)
     setNewNote(event.target.value)
   }
+
+
 
   return (
     <div>
