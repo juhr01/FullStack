@@ -33,9 +33,13 @@ const App = () => {
        {
       window.alert(`${newName} is already added to the phonebook`)
     } else {
-      setPersons(persons.concat(person))
+      Server
+      .addNumber(person)
+      .then(newPerson => {
+        setPersons(persons.concat(newPerson))
       setNewName('')
       setNewNumber('')
+      })
     }
   }
 
