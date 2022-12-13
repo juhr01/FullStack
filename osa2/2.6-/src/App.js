@@ -4,6 +4,7 @@ import FilterPersons from './components/FilterPersons'
 import Persons from './components/Persons'
 import axios from 'axios'
 import Server from './services/personDB'
+import personDB from './services/personDB'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -18,7 +19,6 @@ const App = () => {
         setPersons(response)
       })
   }, [])
-  console.log('render', persons.length, 'persons')
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -55,6 +55,25 @@ const App = () => {
     setNewFilter(event.target.value)
   }
 
+  const handleDeletePerson = (name, id) => {
+    return () => {
+      if(window.confirm(`Delete ${name} ?`)) {
+        Server
+        .deletePerson(id)
+        .then(() => {
+          setPersons(persons.filter(p => p.id !== id))
+          setNewName('')
+          setNewFilter('')
+        })
+        .catch(error => {
+          setPersons(persons.filter(p => p.name !== name))
+          window.alert(`User ${name} is not on the server`)
+        })
+
+      }
+    }
+  }
+
   return (
     <div>
       <h1>Phonebook</h1>
@@ -63,7 +82,7 @@ const App = () => {
       newNumber={newNumber} handleNumberChange={handleNumberChange} />
       <br />
       <h2>Numbers</h2>
-      <Persons persons={persons} newFilter={newFilter} />
+      <Persons persons={persons} newFilter={newFilter} handleDeletePerson={handleDeletePerson}/>
       <br/>
       <FilterPersons newFilter={newFilter} handleFilterChange={handleFilterChange} />
     </div>
