@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import AddPerson from './components/AddPerson'
 import FilterPersons from './components/FilterPersons'
 import Persons from './components/Persons'
+import Notificaton from './components/Notification'
 import axios from 'axios'
 import Server from './services/personDB'
 import personDB from './services/personDB'
@@ -11,6 +12,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
       Server
@@ -37,7 +39,7 @@ const App = () => {
         })
         .catch(error => {
           console.log(error)
-          window.alert("Update failed")
+          setErrorMessage('Update failed!')
         })
         setNewName('')
         setNewNumber('')
@@ -82,7 +84,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
-      <br />
+      {/* <Notification message={errorMessage} /> */}
       <AddPerson addPerson={addPerson} newName={newName} handleNameChange={handleNameChange}
       newNumber={newNumber} handleNumberChange={handleNumberChange} />
       <br />
