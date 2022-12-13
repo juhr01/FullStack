@@ -27,11 +27,21 @@ const App = () => {
       number: newNumber
     }
 
-    if (
-      persons.filter(p => p.name === person.name).length > 0
-      )
-       {
-      window.alert(`${newName} is already added to the phonebook`)
+    if (persons.filter(p => p.name === person.name).length > 0) {
+      if (window.confirm(`${newName} is already in the phonebook. Replace number?`)) {
+        const oldPerson = persons.find(p => p.name === newName)
+        Server
+        .update(oldPerson.id, {...oldPerson, number: newNumber})
+        .then(newPerson => {
+          setPersons(persons.map(p => (p.name === newName ? newPerson : p)))
+        })
+        .catch(error => {
+          console.log(error)
+          window.alert("Update failed")
+        })
+        setNewName('')
+        setNewNumber('')
+      }
     } else {
       Server
       .addNumber(person)
@@ -57,7 +67,7 @@ const App = () => {
 
   const handleDeletePerson = (name, id) => {
     return () => {
-      if(window.confirm(`Delete ${name} ?`)) {
+      if(window.confirm(`Delete ${name}?`)) {
         Server
         .deletePerson(id)
         .then(() => {
@@ -65,11 +75,6 @@ const App = () => {
           setNewName('')
           setNewFilter('')
         })
-        .catch(error => {
-          setPersons(persons.filter(p => p.name !== name))
-          window.alert(`User ${name} is not on the server`)
-        })
-
       }
     }
   }
