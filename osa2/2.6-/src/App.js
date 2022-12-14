@@ -2,17 +2,15 @@ import { useState, useEffect } from 'react'
 import AddPerson from './components/AddPerson'
 import FilterPersons from './components/FilterPersons'
 import Persons from './components/Persons'
-import Notificaton from './components/Notification'
-import axios from 'axios'
 import Server from './services/personDB'
-import personDB from './services/personDB'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
-  const [errorMessage, setErrorMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
       Server
@@ -36,6 +34,7 @@ const App = () => {
         .update(oldPerson.id, {...oldPerson, number: newNumber})
         .then(newPerson => {
           setPersons(persons.map(p => (p.name === newName ? newPerson : p)))
+          setErrorMessage(`Updated ${newName}!`)
         })
         .catch(error => {
           console.log(error)
@@ -51,8 +50,12 @@ const App = () => {
         setPersons(persons.concat(newPerson))
       setNewName('')
       setNewNumber('')
+      setErrorMessage(`Added ${newName}!`)
       })
     }
+    setTimeout(() => {
+      setErrorMessage(null);
+    }, 3000);
   }
 
   const handleNameChange = (event) => {
@@ -74,8 +77,12 @@ const App = () => {
         .deletePerson(id)
         .then(() => {
           setPersons(persons.filter(p => p.id !== id))
+          setErrorMessage(`Deleted ${name}!`)
           setNewName('')
           setNewFilter('')
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 3000);
         })
       }
     }
@@ -84,7 +91,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
-      {/* <Notification message={errorMessage} /> */}
+      <Notification message={errorMessage} />
       <AddPerson addPerson={addPerson} newName={newName} handleNameChange={handleNameChange}
       newNumber={newNumber} handleNumberChange={handleNumberChange} />
       <br />
