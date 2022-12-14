@@ -38,7 +38,8 @@ const App = () => {
         })
         .catch(error => {
           console.log(error)
-          setErrorMessage('Update failed!')
+          setPersons(persons.filter(p => p.name !== newName))
+          setErrorMessage(`Update failed! ${newName} is already deleted!`)
         })
         setNewName('')
         setNewNumber('')
@@ -80,10 +81,15 @@ const App = () => {
           setErrorMessage(`Deleted ${name}!`)
           setNewName('')
           setNewFilter('')
-          setTimeout(() => {
-            setErrorMessage(null);
-          }, 3000);
         })
+        .catch(error => {
+          console.log(error)
+          setPersons(persons.filter(p => p.name !== name))
+          setErrorMessage(`${name} is already deleted!`)
+        })
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 3000);
       }
     }
   }
