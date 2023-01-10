@@ -60,12 +60,12 @@ app.get('/api/persons', (request, response) => {
     }
 })
 
-/* app.delete('/api/notes/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
-  notes = notes.filter(note => note.id !== id)
+  persons = persons.filter(person => person.id !== id)
 
   response.status(204).end()
-}) */
+})
 
 /* const generateId = () => {
   const maxId = notes.length > 0
