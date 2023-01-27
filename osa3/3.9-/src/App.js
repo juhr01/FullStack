@@ -27,7 +27,9 @@ const App = () => {
       number: newNumber
     }
 
-    if (persons.filter(p => p.name === person.name).length > 0) {
+    if (newName === '' || newName.length < 1) {
+      setErrorMessage('Name missing!')
+  } else if (persons.filter(p => p.name === person.name).length > 0) {
       if (window.confirm(`${newName} is already in the phonebook. Replace number?`)) {
         const oldPerson = persons.find(p => p.name === newName)
         Server
