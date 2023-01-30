@@ -27,9 +27,9 @@ const App = () => {
       number: newNumber
     }
 
-    if (newName === '' || newName.length < 1) {
+    /* if (newName === '' || newName.length < 1) {
       setErrorMessage('Name missing!')
-  } else if (persons.filter(p => p.name === person.name).length > 0) {
+  } else */ if (persons.filter(p => p.name === person.name).length > 0) {
       if (window.confirm(`${newName} is already in the phonebook. Replace number?`)) {
         const oldPerson = persons.find(p => p.name === newName)
         Server
@@ -56,6 +56,7 @@ const App = () => {
       setErrorMessage(`Added ${newName}!`)
       })
       .catch(error => {
+        setErrorMessage(error.response.data)
         console.log(error.response.data)
       })
     }
