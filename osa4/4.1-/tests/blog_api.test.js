@@ -51,6 +51,29 @@ test('identifying field is id', async () => {
     expect(response.body).toBeDefined
 })
 
+test('new blog can be added', async () => {
+    const newBlog = {
+        _id: '5a422b3a1b54a676234d17f9',
+    title: 'Canonical string reduction',
+    author: 'Edsger W. Dijkstra',
+    url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+    likes: 12,
+    __v: 0
+    }
+
+    await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+    const titles = response.body.map(r => r.title)
+
+    expect(response.body).toHaveLength(initialBlogs.length + 1)
+    expect(titles).toContain('Canonical string reduction')
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
