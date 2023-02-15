@@ -6,26 +6,28 @@ const api = supertest(app)
 
 const Blog = require('../models/blog')
 
-  beforeEach(async () => {
-    await Blog.deleteMany({})
-    await Blog.insertMany(helper.initialBlogs)
-  })
-
-test('blogs are returned as json', async () => {
-  await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
+beforeEach(async () => {
+  await Blog.deleteMany({})
+  await Blog.insertMany(helper.initialBlogs)
 })
 
-test('2 blogs are returned', async () => {
-    const response = await api.get('/api/blogs')
-    expect(response.body).toHaveLength(helper.initialBlogs.length)
-} )
-
-test('identifying field is id', async () => {
-    const response = await api.get('/api/blogs')
-    expect(response.body).toBeDefined
+describe('when there is initially some blogs saved', () => {
+  test('blogs are returned as json', async () => {
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  })
+  
+  test('all blogs are returned', async () => {
+      const response = await api.get('/api/blogs')
+      expect(response.body).toHaveLength(helper.initialBlogs.length)
+  } )
+  
+  test('identifying field is id', async () => {
+      const response = await api.get('/api/blogs')
+      expect(response.body).toBeDefined
+  })
 })
 
 describe('blog addition', () => {
@@ -95,6 +97,28 @@ describe('blog deletion', () => {
   })
 })
 
+describe('blog update', () => {
+  test('status 200  if succeeded', async () => {
+
+    const response = await api.get('/api/blogs')
+
+    const blogToUpdate = response.body[0]
+
+    const newBlog = {
+      title: 'joon blogi',
+      author: 'joo',
+      url:
+        'url',
+      likes: 3,
+    }
+
+    console.log(newBlog)
+    await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send(newBlog)
+    .expect(200)
+  })
+})
 
 afterAll(async () => {
   await mongoose.connection.close()

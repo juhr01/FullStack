@@ -17,6 +17,3 @@ blogSchema.set('toJSON', {
 
 const Blog = mongoose.model('Blog', blogSchema)
 module.exports = Blog
-
-/* const mongoUrl = 'mongodb://localhost/bloglist'
-mongoose.connect(mongoUrl) */

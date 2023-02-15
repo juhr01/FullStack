@@ -16,11 +16,13 @@ blogsRouter.get('/', async (request, response) => {
   })
   
   blogsRouter.post('/', async (request, response) => {
+    const body = request.body
+
     const blog = new Blog({
-      title: request.body.title,
-      author: request.body.author,
-      url: request.body.url,
-      likes: request.body.likes
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes
     })
   
     const savedBlog = await blog.save()
@@ -30,6 +32,27 @@ blogsRouter.get('/', async (request, response) => {
   blogsRouter.delete('/:id', async (request, response) => {
     await Blog.findByIdAndRemove(request.params.id)
     response.status(204).end()
+  })
+
+  blogsRouter.put('/:id', async (request, response, next) => {
+    const body = request.body
+
+    const blog = {
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes
+    }
+
+    Blog.findByIdAndUpdate(request.params.id, blog, {new:true})
+    .then(updatedBlog => {
+      if (updatedBlog) {
+        response.json(updatedBlog)
+      } else {
+        throw new Error(`Blog with ID ${request.params.id} not found`)
+      }
+    })
+    .catch(error => next(error))
   })
 
 module.exports = blogsRouter
