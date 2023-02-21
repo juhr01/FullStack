@@ -8,14 +8,25 @@ usersRouter.get('/', async (request, response) => {
 })
 
 usersRouter.post('/', async (request, response) => {
-  const { username, name, password } = request.body
+
+  const body = request.body
+
+  if (body.password === undefined || body.password.length < 3) {
+    return response.status(400).json({error: 'password missing or too short'})
+  }
+
+  if (body.username === undefined || body.username.length < 3) {
+    return response.status(400).json({error: 'username missing or too short'})
+  }
+  
+  //const { username, name, password } = request.body
 
   const saltRounds = 10
-  const passwordHash = await bcrypt.hash(password, saltRounds)
+  const passwordHash = await bcrypt.hash(body.password, saltRounds)
 
   const user = new User({
-    username,
-    name,
+    username: body.username,
+    name: body.name,
     passwordHash,
   })
 
