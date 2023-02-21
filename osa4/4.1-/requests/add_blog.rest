@@ -1,10 +1,10 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJsb2dnYXJpIiwiaWQiOiI2M2Y0YWJmOWNlMDAxNjZjNWI1N2NhNDkiLCJpYXQiOjE2NzY5Nzk3NTJ9.r3yq1ngGZhVm1nPTx8VJ0Wi8HLOLIuYEkqP92o9Y4As
 
 {
-    "title": "title",
-  "author": "author",
+    "title": "blogi 1",
+  "author": "bloggari",
   "url": "url",
-  "likes": "0",
-  "user": "63f492cd7ce969a77bc40fe2"
+  "likes": "69"
 }

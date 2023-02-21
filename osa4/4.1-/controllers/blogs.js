@@ -19,8 +19,8 @@ blogsRouter.get('/', async (request, response) => {
   
 const getTokenFrom = request => {
   const authorization = request.get('authorization')
-  if (authorization && authorization.startsWith('Bearer')) {
-    return authorization.replace('Bearer', '')
+  if (authorization && authorization.startsWith('Bearer ')) {
+    return authorization.replace('Bearer ', '')
   }
   return null
 }
@@ -31,7 +31,7 @@ const getTokenFrom = request => {
     if (!decodedToken.id) {
       return response.status(401).json({error: 'token invalid'})
     }
-    const user = await User.findById(body.user)
+    const user = await User.findById(decodedToken.id)
 
     const blog = new Blog({
       title: body.title,
