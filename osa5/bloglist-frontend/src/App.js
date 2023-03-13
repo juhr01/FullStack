@@ -83,9 +83,8 @@ const App = () => {
     console.log(blogObject)
 
      try {
-      blogService.create(blogObject).await(returnedBlog => 
+      let returnedBlog = await blogService.create(blogObject)
       setBlogs(blogs.concat(returnedBlog))
-      )
       setAuthor('')
       setTitle('')
       setUrl('')
