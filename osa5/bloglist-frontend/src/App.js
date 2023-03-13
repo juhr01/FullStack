@@ -8,7 +8,7 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [message, setMessage] = useState(null)
   const [user, setUser] = useState(null)
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
@@ -20,6 +20,15 @@ const App = () => {
       setBlogs(blogs)
     )
   }, [])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setMessage(null)
+    }, 3000)
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [message])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser')
@@ -45,11 +54,9 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
+
     } catch (exception) {
-      setErrorMessage('wrong credentials')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      setMessage('error wrong credentials')
     }
   }
 
@@ -59,10 +66,7 @@ const App = () => {
       window.localStorage.removeItem('loggedBloglistUser')
       setUser(null)
     } catch (exception) {
-      setErrorMessage('logout failed')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      setMessage('error logout failed')
     }
     
   }
@@ -85,9 +89,9 @@ const App = () => {
       setAuthor('')
       setTitle('')
       setUrl('')
-      setErrorMessage(`blog ${title} added by ${author}`)
+      setMessage(`blog ${title} added by ${author}`)
   } catch (exception) {
-    setErrorMessage('blog addition failed')
+    setMessage('error blog addition failed')
   }
 }
 
@@ -95,6 +99,7 @@ const App = () => {
     return (
       <div>
         <h2>Log in</h2>
+        <Notification message={message} />
         <form onSubmit={handleLogin}>
           <div>
             username
@@ -121,8 +126,8 @@ const App = () => {
 
   return (
     <div>
-      <Notification message={errorMessage} />
       <h2>blogs</h2>
+      <Notification message={message} />
       <p>{user.username} logged in</p>
       <button onClick={handleLogout}>logout</button>
       <br/>
