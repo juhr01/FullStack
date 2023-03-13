@@ -67,7 +67,7 @@ const App = () => {
     
   }
 
-  const addBlog = event => {
+  const addBlog = async event => {
     event.preventDefault()
 
     const blogObject = {
@@ -78,14 +78,18 @@ const App = () => {
 
     console.log(blogObject)
 
-    blogService.create(blogObject).then(returnedBlog => 
+     try {
+      blogService.create(blogObject).await(returnedBlog => 
       setBlogs(blogs.concat(returnedBlog))
       )
       setAuthor('')
       setTitle('')
       setUrl('')
       setErrorMessage(`blog ${title} added by ${author}`)
+  } catch (exception) {
+    setErrorMessage('blog addition failed')
   }
+}
 
   if (user === null) {
     return (
@@ -118,12 +122,13 @@ const App = () => {
   return (
     <div>
       <Notification message={errorMessage} />
-      <h2>Bloglist</h2>
+      <h2>blogs</h2>
       <p>{user.username} logged in</p>
       <button onClick={handleLogout}>logout</button>
       <br/>
       <br/>
       <form onSubmit={addBlog}>
+        <h2>add new blog</h2>
         <div>title: <input value={title} onChange={({target}) => setTitle(target.value)}/></div>
         <div>author: <input value={author} onChange={({target}) => setAuthor(target.value)}/></div>
         <div>url: <input value={url} onChange={({target}) => setUrl(target.value)}/></div>
