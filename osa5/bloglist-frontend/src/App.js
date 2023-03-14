@@ -56,7 +56,7 @@ const App = () => {
       setPassword('')
 
     } catch (exception) {
-      setMessage('error wrong credentials')
+      setMessage('error wrong cridentials')
     }
   }
 
