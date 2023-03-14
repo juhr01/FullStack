@@ -82,16 +82,24 @@ const App = () => {
 
     console.log(blogObject)
 
-     try {
-      let returnedBlog = await blogService.create(blogObject)
-      setBlogs(blogs.concat(returnedBlog))
-      setAuthor('')
-      setTitle('')
-      setUrl('')
-      setMessage(`blog ${title} added by ${author}`)
-  } catch (exception) {
-    setMessage('error blog addition failed')
-  }
+    if (blogObject.title === null || blogObject.title === "") {
+      setMessage('error title empty')
+    } else if (blogObject.author === null || blogObject.author === "") {
+      setMessage('error author empty')
+    } else if (blogObject.author === null || blogObject.url === "") {
+      setMessage('error url empty')
+    } else {
+      try {
+        let returnedBlog = await blogService.create(blogObject)
+        setBlogs(blogs.concat(returnedBlog))
+        setAuthor('')
+        setTitle('')
+        setUrl('')
+        setMessage(`blog ${title} added by ${author}`)
+    } catch (exception) {
+      setMessage('error blog addition failed')
+    }
+    }
 }
 
   if (user === null) {
