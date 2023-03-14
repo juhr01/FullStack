@@ -62,7 +62,7 @@ describe('title empty', () => {
     await api
     .post('/api/blogs')
     .send(newBlog)
-    expect(400)
+    .expect(400)
 })
 })
 
@@ -76,7 +76,7 @@ describe('url empty', () => {
     await api
     .post('/api/blogs')
     .send(newBlog)
-    expect(400)
+    .expect(400)
 })
 })
 
