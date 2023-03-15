@@ -14,8 +14,6 @@ const App = () => {
   const [user, setUser] = useState(null)
   const blogFormRef = useRef()
 
-
-
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs(blogs)
@@ -72,24 +70,13 @@ const App = () => {
     
   }
 
-  const addBlog = async event => {
-    event.preventDefault()
-
-    const blogObject = {
-      'title': title,
-      'author': author,
-      'url': url
-    }
-
-    console.log(blogObject)
+  const addBlog = async blogObject => {
 
       try {
-        let returnedBlog = await blogService.create(blogObject)
+        let returnedBlog = await blogService.create(blogObject, user.token)
         setBlogs(blogs.concat(returnedBlog))
-        setAuthor('')
-        setTitle('')
-        setUrl('')
-        setMessage(`blog ${title} added by ${author}`)
+        blogFormRef.current.toggeVisibility()
+        setMessage(`blog ${blogObject.title} added by ${blogObject.author}`)
     } catch (exception) {
       setMessage('error blog addition failed')
     }
