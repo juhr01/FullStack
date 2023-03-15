@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Togglable from './components/Toggable'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -10,9 +12,8 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState(null)
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+  const blogFormRef = useRef()
+
 
 
   useEffect(() => {
@@ -82,13 +83,6 @@ const App = () => {
 
     console.log(blogObject)
 
-    if (blogObject.title === null || blogObject.title === "") {
-      setMessage('error title empty')
-    } else if (blogObject.author === null || blogObject.author === "") {
-      setMessage('error author empty')
-    } else if (blogObject.author === null || blogObject.url === "") {
-      setMessage('error url empty')
-    } else {
       try {
         let returnedBlog = await blogService.create(blogObject)
         setBlogs(blogs.concat(returnedBlog))
@@ -98,7 +92,6 @@ const App = () => {
         setMessage(`blog ${title} added by ${author}`)
     } catch (exception) {
       setMessage('error blog addition failed')
-    }
     }
 }
 
@@ -139,13 +132,11 @@ const App = () => {
       <button onClick={handleLogout}>logout</button>
       <br/>
       <br/>
-      <form onSubmit={addBlog}>
-        <h2>add new blog</h2>
-        <div>title: <input value={title} onChange={({target}) => setTitle(target.value)}/></div>
-        <div>author: <input value={author} onChange={({target}) => setAuthor(target.value)}/></div>
-        <div>url: <input value={url} onChange={({target}) => setUrl(target.value)}/></div>
-        <button type='submit'>create</button>
-      </form>
+      <Togglable buttonLabel="new blog">
+        <BlogForm 
+
+        />
+      </Togglable>
       <br/>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
