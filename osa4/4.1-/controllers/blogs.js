@@ -28,16 +28,15 @@ const getTokenFrom = request => {
 blogsRouter.post('/', async (request, response) => {
   const body = request.body
 
-  if (body.title === undefined || body.title === null) {
+  if (!body.title || body.title.trim().length === 0) {
     return response.status(400).end()
   }
-  if (body.author === undefined || body.author === null) {
+  if (!body.author || body.author.trim().length === 0) {
     return response.status(400).end()
   }
-  if (body.url === undefined || body.url === null) {
+  if (!body.url || body.url.trim().length === 0) {
     return response.status(400).end()
   }
-
 
   try {
     const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
