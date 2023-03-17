@@ -65,20 +65,20 @@ const App = () => {
       window.localStorage.removeItem('loggedBloglistUser')
       setUser(null)
     } catch (exception) {
-      setMessage('error logout failed')
+      setMessage('error' + exception)
     }
     
   }
 
   const addBlog = async blogObject => {
-
       try {
         let returnedBlog = await blogService.create(blogObject, user.token)
         setBlogs(blogs.concat(returnedBlog))
-        blogFormRef.current.toggeVisibility()
+        blogFormRef.current.toggleVisibility()
         setMessage(`blog ${blogObject.title} added by ${blogObject.author}`)
     } catch (exception) {
-      setMessage('error blog addition failed')
+      console.log(exception)
+      setMessage('error' + exception)
     }
 }
 
@@ -119,10 +119,8 @@ const App = () => {
       <button onClick={handleLogout}>logout</button>
       <br/>
       <br/>
-      <Togglable buttonLabel="new blog">
-        <BlogForm 
-
-        />
+      <Togglable buttonLabel="new blog" ref={blogFormRef}>
+        <BlogForm createBlog={addBlog}/>
       </Togglable>
       <br/>
       {blogs.map(blog =>
