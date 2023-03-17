@@ -21,9 +21,13 @@ const getAll = () => {
   return response.data
  }
 
- const update = (id, newObject) => {
-  const request = axios.put(`${ baseUrl } /${id}`, newObject)
-  return request.then(response => response.data)
+ const update = async (id, newObject) => {
+  const config = {
+    headers:  {Authorization: token},
+  }
+
+  const request = await axios.put(`${baseUrl}/${id}`, newObject, config)
+  return request.data
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export
