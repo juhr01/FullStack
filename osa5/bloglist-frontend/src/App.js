@@ -102,6 +102,7 @@ const handleRemove = async event => {
       setMessage('error' + exception)
     }
   }
+  
 }
 
   if (user === null) {
