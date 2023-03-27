@@ -1,4 +1,3 @@
-import blogService from '../services/blogs'
 import { useState } from 'react'
 
 const Blog = ({ blog, handleLikeChange, handleRemove }) => {
