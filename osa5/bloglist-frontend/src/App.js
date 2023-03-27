@@ -82,6 +82,28 @@ const App = () => {
     }
 }
 
+const handleLikeChange = async event => {
+  const likes = event.likes + 1
+  const likedBlog = {...event, likes}
+  const updatedBlogs = blogs.map(blog => 
+    blog.id === event.id ? likedBlog : blog)
+
+  await blogService.update(event.id, likedBlog)
+  setBlogs(updatedBlogs)
+}
+
+const handleRemove = async event => {
+  if (window.confirm(`Remove blog ${event.title} by ${event.author}?`)) {
+    try {
+      await blogService.remove(event.id, user.token)
+      setBlogs(blogs.filter(blog => blog.id !== event.id))
+      setMessage(`Blog ${event.title} removed`)
+    } catch (exception) {
+      setMessage('error' + exception)
+    }
+  }
+}
+
   if (user === null) {
     return (
       <div>
@@ -124,7 +146,7 @@ const App = () => {
       </Togglable>
       <br/>
       {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} handleLikeChange={handleLikeChange} handleRemove={handleRemove} />
       )}
     </div>
   )

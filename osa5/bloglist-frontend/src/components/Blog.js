@@ -1,11 +1,12 @@
 import blogService from '../services/blogs'
 import { useState } from 'react'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, handleLikeChange, handleRemove }) => {
   const [visible, setVisible] = useState(false)
 
   const hideWhenVisible = { display: visible ? 'none' : '' }
   const showWhenVisible = { display: visible ? '' : 'none' }
+  const loggedBloglistUser = JSON.parse(localStorage.getItem('loggedBloglistUser'))
 
   const blogStyle = {
     paddingTop: 10,
@@ -20,13 +21,6 @@ const Blog = ({ blog }) => {
     setVisible(!visible)
   }
 
-  const addLike = async event => {
-    event.preventDefault()
-    const likes = blog.likes + 1
-    const likedBlog = {...blog, likes}
-    await blogService.update(blog.id, likedBlog)
-  }
-
   return (
     <div style={blogStyle} id={blog.title}>
       <div style={hideWhenVisible}>
@@ -36,8 +30,11 @@ const Blog = ({ blog }) => {
         {blog.title} {blog.author} <button onClick={toggleVisibility}>hide</button>
         <br />
         {blog.url} <br />
-        likes {blog.likes} <button onClick={addLike}>like</button><br />
+        likes {blog.likes} <button onClick={() => handleLikeChange(blog)}>like</button><br />
         {blog.user.username}
+        {blog.user.username === loggedBloglistUser.username && (
+          <button onClick={() => handleRemove(blog)}>remove</button>
+        )}
       </div>
     </div>
   )
