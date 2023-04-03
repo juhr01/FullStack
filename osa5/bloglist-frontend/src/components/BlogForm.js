@@ -8,6 +8,12 @@ const BlogForm = ({ createBlog }, props) => {
       url: document.forms['blog']['url'].value
     })
   }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('form[name="blog"]')
+    form.addEventListener('submit', addBlog)
+  })
+
   return (
     <div>
       <h2>create a new blog</h2>

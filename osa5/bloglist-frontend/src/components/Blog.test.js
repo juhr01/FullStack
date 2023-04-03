@@ -50,8 +50,13 @@ test('when liked twice the event handler is called twice', async () => {
   await user.click(viewButton)
 
   const likeButton = component.getByText('like')
+
   await user.click(likeButton)
   await user.click(likeButton)
 
   expect(mockHandler.mock.calls).toHaveLength(2)
+})
+
+test('blog addition calls callback function with right info', async () => {
+
 })
