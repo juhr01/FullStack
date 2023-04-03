@@ -67,43 +67,43 @@ const App = () => {
     } catch (exception) {
       setMessage('error' + exception)
     }
-    
+
   }
 
   const addBlog = async blogObject => {
-      try {
-        let returnedBlog = await blogService.create(blogObject, user.token)
-        setBlogs(blogs.concat(returnedBlog))
-        blogFormRef.current.toggleVisibility()
-        setMessage(`blog ${blogObject.title} added by ${blogObject.author}`)
+    try {
+      let returnedBlog = await blogService.create(blogObject, user.token)
+      setBlogs(blogs.concat(returnedBlog))
+      blogFormRef.current.toggleVisibility()
+      setMessage(`blog ${blogObject.title} added by ${blogObject.author}`)
     } catch (exception) {
       console.log(exception)
       setMessage('error' + exception)
     }
-}
-
-const handleLikeChange = async event => {
-  const likes = event.likes + 1
-  const likedBlog = {...event, likes}
-  const updatedBlogs = blogs.map(blog => 
-    blog.id === event.id ? likedBlog : blog)
-
-  await blogService.update(event.id, likedBlog)
-  setBlogs(updatedBlogs)
-}
-
-const handleRemove = async event => {
-  if (window.confirm(`Remove blog ${event.title} by ${event.author}?`)) {
-    try {
-      await blogService.remove(event.id, user.token)
-      setBlogs(blogs.filter(blog => blog.id !== event.id))
-      setMessage(`Blog ${event.title} removed`)
-    } catch (exception) {
-      setMessage('error' + exception)
-    }
   }
-  
-}
+
+  const handleLikeChange = async event => {
+    const likes = event.likes + 1
+    const likedBlog = { ...event, likes }
+    const updatedBlogs = blogs.map(blog =>
+      blog.id === event.id ? likedBlog : blog)
+
+    await blogService.update(event.id, likedBlog)
+    setBlogs(updatedBlogs)
+  }
+
+  const handleRemove = async event => {
+    if (window.confirm(`Remove blog ${event.title} by ${event.author}?`)) {
+      try {
+        await blogService.remove(event.id, user.token)
+        setBlogs(blogs.filter(blog => blog.id !== event.id))
+        setMessage(`Blog ${event.title} removed`)
+      } catch (exception) {
+        setMessage('error' + exception)
+      }
+    }
+
+  }
 
   if (user === null) {
     return (

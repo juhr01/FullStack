@@ -2,9 +2,13 @@ import { useState } from 'react'
 
 const Blog = ({ blog, handleLikeChange, handleRemove }) => {
   const [visible, setVisible] = useState(false)
+  const [removeVisible, setRemoveVisible] = useState(false)
 
   const hideWhenVisible = { display: visible ? 'none' : '' }
   const showWhenVisible = { display: visible ? '' : 'none' }
+
+  const hideWhenNotLogged = { display: removeVisible ? 'none' : '' }
+
   const loggedBloglistUser = JSON.parse(localStorage.getItem('loggedBloglistUser'))
 
   const blogStyle = {
@@ -18,11 +22,14 @@ const Blog = ({ blog, handleLikeChange, handleRemove }) => {
 
   const toggleVisibility = () => {
     setVisible(!visible)
+    if (blog.user.username !== loggedBloglistUser.username) {
+      setRemoveVisible(true)
+    }
   }
 
   return (
     <div style={blogStyle} id={blog.title}>
-      <div style={hideWhenVisible}>
+      <div style={hideWhenVisible} className='blogTitle'>
         {blog.title} {blog.author} <button onClick={toggleVisibility}>view</button>
       </div>
       <div style={showWhenVisible}>
@@ -31,9 +38,7 @@ const Blog = ({ blog, handleLikeChange, handleRemove }) => {
         {blog.url} <br />
         likes {blog.likes} <button onClick={() => handleLikeChange(blog)}>like</button><br />
         {blog.user.username}
-        {blog.user.username === loggedBloglistUser.username && (
-          <button onClick={() => handleRemove(blog)}>remove</button>
-        )}
+        <button style={hideWhenNotLogged} onClick={() => handleRemove(blog)}>remove</button>
       </div>
     </div>
   )
