@@ -1,6 +1,7 @@
 import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
 const blog = {
@@ -25,5 +26,13 @@ test('title is rendered', () => {
 })
 
 test('additional info shown when button pressed', () => {
-    
+  const component = render(<Blog blog={blog} />)
+
+  const viewButton = component.getByText('view')
+
+  fireEvent.click(viewButton)
+
+  const blogDetails = component.container.querySelector('.blogDetails')
+
+  expect(blogDetails).toBeVisible()
 })

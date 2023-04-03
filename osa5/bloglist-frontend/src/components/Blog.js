@@ -22,7 +22,7 @@ const Blog = ({ blog, handleLikeChange, handleRemove }) => {
 
   const toggleVisibility = () => {
     setVisible(!visible)
-    if (blog.user.username !== loggedBloglistUser.username) {
+    if (loggedBloglistUser && blog.user.username !== loggedBloglistUser.username) {
       setRemoveVisible(true)
     }
   }
@@ -32,7 +32,7 @@ const Blog = ({ blog, handleLikeChange, handleRemove }) => {
       <div style={hideWhenVisible} className='blogTitle'>
         {blog.title} {blog.author} <button onClick={toggleVisibility}>view</button>
       </div>
-      <div style={showWhenVisible}>
+      <div style={showWhenVisible} className='blogDetails'>
         {blog.title} {blog.author} <button onClick={toggleVisibility}>hide</button>
         <br />
         {blog.url} <br />
