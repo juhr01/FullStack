@@ -50,6 +50,14 @@ describe('Blog app', function() {
         cy.get('html').should('contain', 'testblog')
         cy.get('.success').should('contain', 'blog testblog added by testauthor')
       })
+
+      it('A blog can be liked', function() {
+        cy.createBlog({
+          title: 'testtitle',
+          author: 'testauthor',
+          url: 'testurl'
+        })
+      })
     })
 
   })
