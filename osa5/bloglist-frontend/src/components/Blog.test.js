@@ -56,7 +56,3 @@ test('when liked twice the event handler is called twice', async () => {
 
   expect(mockHandler.mock.calls).toHaveLength(2)
 })
-
-test('blog addition calls callback function with right info', async () => {
-
-})

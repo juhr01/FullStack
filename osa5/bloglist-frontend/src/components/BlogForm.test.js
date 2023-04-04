@@ -8,16 +8,19 @@ test('<BlogForm /> updates parent state and calls onSubmit', async () => {
   const user = userEvent.setup()
   const createBlog = jest.fn()
 
-  render(<BlogForm createBlog={createBlog} />)
+  const component = render(<BlogForm createBlog={createBlog} />)
 
-  const inputs = screen.getAllByRole('textbox')
   const createButton = screen.getByText('create')
 
-  await user.type(inputs[0], 'test')
-  await user.type(inputs[1], 'test')
-  await user.type(inputs[2], 'test')
+  const title = component.container.querySelector('#title')
+  const author = component.container.querySelector('#author')
+  const url = component.container.querySelector('#url')
+
+  await user.type(title, 'testtitle')
+  await user.type(author, 'testauthor')
+  await user.type(url, 'testurl')
   await user.click(createButton)
 
   expect(createBlog.mock.calls).toHaveLength(1)
-  expect(createBlog.mock.calls[0][0].title).toBe('test')
+  expect(createBlog.mock.calls[0][0].title).toBe('testtitle')
 })
