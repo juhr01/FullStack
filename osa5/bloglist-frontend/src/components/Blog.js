@@ -4,8 +4,8 @@ const Blog = ({ blog, handleLikeChange, handleRemove }) => {
   const [visible, setVisible] = useState(false)
   const [removeVisible, setRemoveVisible] = useState(false)
 
-  const hideWhenVisible = { display: visible ? 'none' : '' }
-  const showWhenVisible = { display: visible ? '' : 'none' }
+  const hideDetailsWhenVisible = { display: visible ? 'none' : '' }
+  const showDetailsWhenVisible = { display: visible ? '' : 'none' }
 
   const hideWhenNotLogged = { display: removeVisible ? 'none' : '' }
 
@@ -29,10 +29,10 @@ const Blog = ({ blog, handleLikeChange, handleRemove }) => {
 
   return (
     <div style={blogStyle} id={blog.title}>
-      <div style={hideWhenVisible} className='blogTitle'>
+      <div style={hideDetailsWhenVisible} className='blogTitle'>
         {blog.title} {blog.author} <button onClick={toggleVisibility}>view</button>
       </div>
-      <div style={showWhenVisible} className='blogDetails'>
+      <div style={showDetailsWhenVisible} className='blogDetails'>
         {blog.title} {blog.author} <button onClick={toggleVisibility}>hide</button>
         <br />
         {blog.url} <br />
