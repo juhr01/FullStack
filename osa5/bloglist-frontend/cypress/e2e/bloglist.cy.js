@@ -7,6 +7,14 @@ describe('Blog app', function() {
       name: 'test'
     }
     cy.request('POST', 'http://localhost:3003/api/users/', user )
+
+    const user2 = {
+      username: 'test2',
+      password: 'test2',
+      name: 'test2'
+    }
+    cy.request('POST', 'http://localhost:3003/api/users/', user2 )
+
     cy.visit('http://localhost:3000')
   })
 
@@ -62,6 +70,38 @@ describe('Blog app', function() {
         cy.get('#like-Button').click()
 
         cy.get('#blogLikes').should('contain', '1')
+      })
+
+      it('blog can be deleted', function() {
+        cy.createBlog({
+          title: 'testtitle',
+          author: 'testauthor',
+          url: 'testurl'
+        })
+
+        cy.get('#viewDetails-Button').click()
+
+        cy.get('#blogRemove-Button').click()
+
+        cy.get('.success').should('contain', 'blog testtitle removed')
+      })
+
+      it('only the user who added a blog can see its remove button', function() {
+        cy.createBlog({
+          title: 'testtitle',
+          author: 'testauthor',
+          url: 'testurl'
+        })
+
+        cy.get('#logout-Button').click()
+
+        cy.get('#usernameInput').type('test2')
+        cy.get('#passwordInput').type('test2')
+        cy.get('#login-Button').click()
+
+        cy.get('#viewDetails-Button').click()
+
+        cy.get('.blogDetails').should('not.contain', '#blogRemove-Button')
       })
     })
 

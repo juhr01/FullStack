@@ -37,7 +37,7 @@ const Blog = ({ blog, handleLikeChange, handleRemove }) => {
         <p id='blogUrl'>{blog.url}</p>
         <p id='blogLikes'>likes {blog.likes} <button id='like-Button' onClick={() => handleLikeChange(blog)}>like</button><br /></p>
         <p id='blogUserUsername'>{blog.user.username}</p>
-        <button style={hideWhenNotLogged} onClick={() => handleRemove(blog)}>remove</button>
+        <button id='blogRemove-Button' style={hideWhenNotLogged} onClick={() => handleRemove(blog)}>remove</button>
       </div>
     </div>
   )

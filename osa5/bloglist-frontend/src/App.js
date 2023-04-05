@@ -97,7 +97,7 @@ const App = () => {
       try {
         await blogService.remove(event.id, user.token)
         setBlogs(blogs.filter(blog => blog.id !== event.id))
-        setMessage(`Blog ${event.title} removed`)
+        setMessage(`blog ${event.title} removed`)
       } catch (exception) {
         setMessage('error' + exception)
       }
@@ -141,7 +141,7 @@ const App = () => {
       <h2>blogs</h2>
       <Notification message={message} />
       <p>{user.username} logged in</p>
-      <button onClick={handleLogout}>logout</button>
+      <button id="logout-Button" onClick={handleLogout}>logout</button>
       <br/>
       <br/>
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
