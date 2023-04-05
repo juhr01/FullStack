@@ -23,7 +23,7 @@ describe('Blog app', function() {
   })
 
   describe('Login',function() {
-    it('succeeds with correct credentials', function() {
+    it('Succeeds with correct credentials', function() {
       cy.get('#usernameInput').type('test')
       cy.get('#passwordInput').type('test')
       cy.get('#login-Button').click()
@@ -31,7 +31,7 @@ describe('Blog app', function() {
       cy.contains('test logged in')
     })
 
-    it('fails with wrong credentials', function() {
+    it('Fails with wrong credentials', function() {
       cy.get('#usernameInput').type('incorrect')
       cy.get('#passwordInput').type('incorrect')
       cy.get('#login-Button').click()
@@ -72,7 +72,7 @@ describe('Blog app', function() {
         cy.get('#blogLikes').should('contain', '1')
       })
 
-      it('blog can be deleted', function() {
+      it('A Blog can be deleted', function() {
         cy.createBlog({
           title: 'testtitle',
           author: 'testauthor',
@@ -86,7 +86,7 @@ describe('Blog app', function() {
         cy.get('.success').should('contain', 'blog testtitle removed')
       })
 
-      it('only the user who added a blog can see its remove button', function() {
+      it('Only the user who added a blog can see its remove button', function() {
         cy.createBlog({
           title: 'testtitle',
           author: 'testauthor',
