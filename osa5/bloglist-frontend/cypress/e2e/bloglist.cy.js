@@ -57,6 +57,11 @@ describe('Blog app', function() {
           author: 'testauthor',
           url: 'testurl'
         })
+
+        cy.get('#viewDetails-Button').click()
+        cy.get('#like-Button').click()
+
+        cy.get('#blogLikes').should('contain', '1')
       })
     })
 
