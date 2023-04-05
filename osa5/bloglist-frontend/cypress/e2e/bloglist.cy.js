@@ -103,6 +103,27 @@ describe('Blog app', function() {
 
         cy.get('.blogDetails').should('not.contain', '#blogRemove-Button')
       })
+
+      it('Blogs are sorted by likes', function() {
+        cy.createBlog({
+          title: 'testtitle1',
+          author: 'testauthor1',
+          url: 'testurl1'
+        })
+
+        cy.createBlog({
+          title: 'testtitle2',
+          author: 'testauthor2',
+          url: 'testurl2'
+        })
+
+        cy.contains('testtitle2').parent().find('#viewDetails-Button').click()
+        cy.get('.blogDetails').contains('testtitle2').parent().find('#like-Button').click()
+
+        cy.wait(500)
+
+        cy.get('.blogTitle').first().should('contain', 'testtitle2')
+      })
     })
 
   })
