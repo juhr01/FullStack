@@ -8,13 +8,19 @@ const getAll = async () => {
 }
 
 const createNew = async (content) => {
-    const object = { content, likes: 0 }
+    const object = { content, 'votes': 0 }
     const response = await axios.post(baseUrl, object)
     return response.data
+}
+
+const deleteAnecdote = async id => {
+    const request = await axios.delete(`${baseUrl}/${id}`)
+    return request.data
 }
 
 
 export default { 
     getAll,
-    createNew
+    createNew,
+    deleteAnecdote
  }

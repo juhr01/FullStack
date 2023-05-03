@@ -1,0 +1,2 @@
+DELETE http://localhost:3001/anecdotes/ayYScmd
+Content-Type: application/json
