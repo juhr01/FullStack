@@ -14,13 +14,19 @@ const createNew = async (content) => {
 }
 
 const deleteAnecdote = async id => {
-    const request = await axios.delete(`${baseUrl}/${id}`)
-    return request.data
+    const response = await axios.delete(`${baseUrl}/${id}`)
+    return response.data
 }
 
+const voteAnecdote = async anecdote => {
+    const object = { ...anecdote, 'votes': anecdote.votes + 1 }
+    const response = await axios.put(`${baseUrl}/${anecdote.id}`, object)
+    return response.data
+}
 
 export default { 
     getAll,
     createNew,
+    voteAnecdote,
     deleteAnecdote
  }
