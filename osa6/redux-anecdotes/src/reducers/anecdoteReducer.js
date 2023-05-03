@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-const anecdotesAtStart = [
+/* const anecdotesAtStart = [
   'If it hurts, do it more often',
   'Adding manpower to a late software project makes it later!',
   'The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
@@ -11,7 +11,7 @@ const anecdotesAtStart = [
 
 const getId = () => (100000 * Math.random()).toFixed(0)
 
-const asObject = anecdote => {
+/*const asObject = anecdote => {
   return {
     content: anecdote,
     id: getId(),
@@ -19,19 +19,20 @@ const asObject = anecdote => {
   }
 }
 
-const initialState = anecdotesAtStart.map(asObject)
+const initialState = anecdotesAtStart.map(asObject) */
 
 const anecdotesSlice = createSlice({
   name: 'anecdotes',
-  initialState,
+  initialState: [],
   reducers: {
     createAnecdote(state, action) {
-      const content = action.payload
+      /* const content = action.payload
       state.push({
         content,
         id: getId(),
         votes: 0
-      })
+      }) */
+      state.push(action.payload)
     },
     voteAnecdote(state, action) {
       const id = action.payload
@@ -43,7 +44,14 @@ const anecdotesSlice = createSlice({
       return state.map(anecdote =>
         anecdote.id !== id ? anecdote : votedAnecdote
       )
+    },
+    appendAnecdote(state, action) {
+      state.push(action.payload)
+    },
+    setAnecdotes(state, action) {
+      return action.payload
     }
+
   }
 }) 
 
@@ -88,7 +96,7 @@ export const createAnecdote = content => {
   }
 } */
 
-export const { createAnecdote, voteAnecdote } = anecdotesSlice.actions
+export const { createAnecdote, voteAnecdote, appendAnecdote, setAnecdotes } = anecdotesSlice.actions
 export default anecdotesSlice.reducer
 
 /* export default reducer */
