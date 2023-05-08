@@ -7,8 +7,19 @@ const App = () => {
   const queryClient = useQueryClient()
 
   const updateAnecdoteMutation = useMutation(updateAnecdote , {
-    onSuccess: () => {
+    /* onSuccess: () => {
       queryClient.invalidateQueries('anecdotes')
+    } */
+    onSuccess: (data, variables) => {
+      queryClient.setQueryData('anecdotes', old => {
+        return old.map(anecdote => {
+          if (anecdote.id === variables.id) {
+            return { ...anecdote, votes: anecdote.votes + 1 }
+          } else {
+            return anecdote
+          }
+        })
+      })
     }
   })
 
