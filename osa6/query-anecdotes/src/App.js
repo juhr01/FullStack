@@ -1,12 +1,15 @@
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
-import { useQuery, useMutation, useQueryClient } from  'react-query'
+import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { getAnecdotes, updateAnecdote } from './requests'
+import { useMessageDispatch } from './MessageContext'
 
 const App = () => {
+  const dispatch = useMessageDispatch()
+
   const queryClient = useQueryClient()
 
-  const updateAnecdoteMutation = useMutation(updateAnecdote , {
+  const updateAnecdoteMutation = useMutation(updateAnecdote, {
     /* onSuccess: () => {
       queryClient.invalidateQueries('anecdotes')
     } */
@@ -24,7 +27,7 @@ const App = () => {
   })
 
   const handleVote = (anecdote) => {
-    updateAnecdoteMutation.mutate({...anecdote, 'votes': anecdote.votes + 1})
+    updateAnecdoteMutation.mutate({ ...anecdote, 'votes': anecdote.votes + 1 })
   }
 
   const result = useQuery('anecdotes', getAnecdotes,
@@ -34,11 +37,11 @@ const App = () => {
     }
   )
 
-  if ( result.isLoading ) {
+  if (result.isLoading) {
     return <div>loading data...</div>
   }
 
-  if ( result.isError ) {
+  if (result.isError) {
     return <div>{result.error.message}</div>
   }
 
@@ -47,10 +50,10 @@ const App = () => {
   return (
     <div>
       <h3>Anecdote app</h3>
-    
+
       <Notification />
       <AnecdoteForm />
-    
+
       {anecdotes.map(anecdote =>
         <div key={anecdote.id}>
           <div>
@@ -58,7 +61,11 @@ const App = () => {
           </div>
           <div>
             has {anecdote.votes}
-            <button onClick={() => handleVote(anecdote)}>vote</button>
+            <button onClick={() => {
+              handleVote(anecdote)
+              dispatch({ type: 'VOTE', name: anecdote.content })
+            }}>
+              vote</button>
           </div>
         </div>
       )}
