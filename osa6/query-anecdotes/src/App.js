@@ -14,24 +14,24 @@ const App = () => {
 
   const handleVote = (anecdote) => {
     updateAnecdoteMutation.mutate({...anecdote, 'votes': anecdote.votes + 1})
-    queryClient.invalidateQueries('anecdotes')
   }
 
-  const { isLoading, isError, data, error } = useQuery('anecdotes', getAnecdotes,
+  const result = useQuery('anecdotes', getAnecdotes,
     {
-      retry: 1
+      retry: 1,
+      refetchOnWindowFocus: false
     }
   )
 
-  if ( isLoading ) {
+  if ( result.isLoading ) {
     return <div>loading data...</div>
   }
 
-  if ( isError ) {
-    return <div>{error.message}</div>
+  if ( result.isError ) {
+    return <div>{result.error.message}</div>
   }
 
-  const anecdotes = data
+  const anecdotes = result.data
 
   return (
     <div>
