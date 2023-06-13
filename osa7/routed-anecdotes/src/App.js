@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import {
   BrowserRouter as Router,
-  Routes, Route, Link
+  Routes, Route, Link, useParams
 } from 'react-router-dom'
 
 const Menu = () => {
@@ -21,10 +21,20 @@ const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} >{anecdote.content}</li>)}
+      {anecdotes.map(anecdote => <li key={anecdote.id}><Link to={`anecdotes/${anecdote.id}`}>{anecdote.content}</Link></li>)}
     </ul>
   </div>
 )
+
+const Anecdote = ({ anecdotes }) => {
+  const id = useParams().id
+  const anecdote = anecdotes.find(a => a.id === Number(id))
+  return (
+    <div>
+      <h2>{anecdote.content} by {anecdote.author}</h2>
+    </div>
+  )
+}
 
 const About = () => (
   <div>
@@ -135,6 +145,7 @@ const App = () => {
         <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />}/>
         <Route path="/create" element={<CreateNew addNew={addNew}/>} />
         <Route path="/about" element={<About />}/>
+        <Route path="/anecdotes/:id" element={<Anecdote anecdotes={anecdotes}/>} />
       </Routes>
       <Footer />
     </div>
