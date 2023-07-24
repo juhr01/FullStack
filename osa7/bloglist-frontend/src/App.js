@@ -1,31 +1,34 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useReducer } from "react";
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
+import { useMessageDispatch } from './Context'
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState(null);
   const [user, setUser] = useState(null);
   const blogFormRef = useRef();
+
+  const messageDispatch = useMessageDispatch()
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
   }, []);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setMessage(null);
-    }, 3000);
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [message]);
+/*   const queryClient = useQueryClient()
+
+  const result = useQuery('blogs', blogService.getAll)
+
+  if ( result.isLoading ) {
+    return <div>loading data...</div>
+  }
+
+  const blogs = result.data */
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBloglistUser");
@@ -51,7 +54,7 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (exception) {
-      setMessage("error wrong cridentials");
+      messageDispatch({ type: 'LOGIN_ERROR' });
     }
   };
 
@@ -61,7 +64,7 @@ const App = () => {
       window.localStorage.removeItem("loggedBloglistUser");
       setUser(null);
     } catch (exception) {
-      setMessage("error" + exception);
+      messageDispatch({ type: 'MISC_ERROR', error: exception});
     }
   };
 
@@ -70,10 +73,10 @@ const App = () => {
       let returnedBlog = await blogService.create(blogObject, user.token);
       setBlogs(blogs.concat(returnedBlog));
       blogFormRef.current.toggleVisibility();
-      setMessage(`blog ${blogObject.title} added by ${blogObject.author}`);
+      messageDispatch({ type: 'BLOG_CREATE', title: blogObject.title, author: blogObject.author });
     } catch (exception) {
       console.log(exception);
-      setMessage("error" + exception);
+      messageDispatch({ type: 'MISC_ERROR', error: exception});
     }
   };
 
@@ -86,6 +89,7 @@ const App = () => {
 
     await blogService.update(event.id, likedBlog);
     setBlogs(updatedBlogs);
+    messageDispatch({ type: 'BLOG_LIKE', title: likedBlog.title})
   };
 
   const handleRemove = async (event) => {
@@ -93,9 +97,9 @@ const App = () => {
       try {
         await blogService.remove(event.id, user.token);
         setBlogs(blogs.filter((blog) => blog.id !== event.id));
-        setMessage(`blog ${event.title} removed`);
+        messageDispatch({ type: 'BLOG_REMOVE', title: event.title});
       } catch (exception) {
-        setMessage("error" + exception);
+        messageDispatch({ type: 'MISC_ERROR', error: exception});
       }
     }
   };
@@ -104,7 +108,7 @@ const App = () => {
     return (
       <div>
         <h2>Log in</h2>
-        <Notification message={message} />
+        <Notification/>
         <form onSubmit={handleLogin}>
           <div>
             username
@@ -137,7 +141,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification message={message} />
+      <Notification/>
       <p>{user.username} logged in</p>
       <button id="logout-Button" onClick={handleLogout}>
         logout
