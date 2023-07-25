@@ -7,9 +7,9 @@ const setToken = (newToken) => {
   token = `Bearer ${newToken}`;
 };
 
-const getAll = () => {
-  const request = axios.get(baseUrl);
-  return request.then((response) => response.data);
+const getAll = async () => {
+  const request = await axios.get(baseUrl);
+  return request.data
 };
 
 const create = async (newObject) => {
@@ -21,12 +21,12 @@ const create = async (newObject) => {
   return response.data;
 };
 
-const update = async (id, newObject) => {
+const update = async (newObject) => {
   const config = {
     headers: { Authorization: token },
   };
 
-  const request = await axios.put(`${baseUrl}/${id}`, newObject, config);
+  const request = await axios.put(`${baseUrl}/${newObject.id}`, newObject, config);
   return request.data;
 };
 
