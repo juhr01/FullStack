@@ -9,7 +9,7 @@ const setToken = (newToken) => {
 
 const getAll = async () => {
   const request = await axios.get(baseUrl);
-  return request.data
+  return request.data;
 };
 
 const create = async (newObject) => {
@@ -26,7 +26,11 @@ const update = async (newObject) => {
     headers: { Authorization: token },
   };
 
-  const request = await axios.put(`${baseUrl}/${newObject.id}`, newObject, config);
+  const request = await axios.put(
+    `${baseUrl}/${newObject.id}`,
+    newObject,
+    config,
+  );
   return request.data;
 };
 

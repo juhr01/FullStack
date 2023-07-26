@@ -5,63 +5,66 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
-import { useMessageDispatch } from './Context'
-import { useQuery, useMutation, useQueryClient } from 'react-query'
+import { useMessageDispatch, useAuthDispatch, useAuthState } from "./Context";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 
 const App = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
+  //const [user, authDispatch] = useState(null);
   const blogFormRef = useRef();
+
+  const user = useAuthState();
+
+  const authDispatch = useAuthDispatch();
+  const messageDispatch = useMessageDispatch();
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBloglistUser");
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
-      setUser(user);
+      authDispatch({ type: "LOGIN", payload: user });
       blogService.setToken(user.token);
     }
   }, []);
 
-  const messageDispatch = useMessageDispatch()
-
   const newBlogMutation = useMutation(blogService.create, {
     onSuccess: (newBlog) => {
-      const blogs = queryClient.getQueryData('blogs')
-      queryClient.setQueryData('blogs', blogs.concat(newBlog))
+      const blogs = queryClient.getQueryData("blogs");
+      queryClient.setQueryData("blogs", blogs.concat(newBlog));
     },
-  })
+  });
 
   const updateBlogMutation = useMutation(blogService.update, {
     /*  onSuccess: () => {
       queryClient.invalidateQueries('blogs')
     }, */
     onSuccess: (updatedBlog) => {
-      queryClient.setQueryData('blogs', (oldData) => {
+      queryClient.setQueryData("blogs", (oldData) => {
         return oldData.map((blog) =>
-          blog.id === updatedBlog.id ? updatedBlog : blog
+          blog.id === updatedBlog.id ? updatedBlog : blog,
         );
       });
     },
-   })
+  });
 
-   const removeBlogMutation = useMutation(blogService.remove, {
+  const removeBlogMutation = useMutation(blogService.remove, {
     onSuccess: () => {
-      queryClient.invalidateQueries('blogs')
+      queryClient.invalidateQueries("blogs");
     },
-   })
+  });
 
-  const result = useQuery('blogs', blogService.getAll, {
+  const result = useQuery("blogs", blogService.getAll, {
     retry: 1,
-    refetchOnWindowFocus: false
-  })
+    refetchOnWindowFocus: false,
+  });
 
-  if ( result.isLoading ) {
-    return <div>loading data...</div>
+  if (result.isLoading) {
+    return <div>loading data...</div>;
   }
 
-  const blogs = result.data
+  const blogs = result.data;
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -74,11 +77,11 @@ const App = () => {
 
       window.localStorage.setItem("loggedBloglistUser", JSON.stringify(user));
       blogService.setToken(user.token);
-      setUser(user);
+      authDispatch({ type: "LOGIN", payload: user });
       setUsername("");
       setPassword("");
     } catch (exception) {
-      messageDispatch({ type: 'LOGIN_ERROR' });
+      messageDispatch({ type: "LOGIN_ERROR" });
     }
   };
 
@@ -86,20 +89,24 @@ const App = () => {
     event.preventDefault();
     try {
       window.localStorage.removeItem("loggedBloglistUser");
-      setUser(null);
+      authDispatch({ type: "LOGOUT" });
     } catch (exception) {
-      messageDispatch({ type: 'MISC_ERROR', error: exception});
+      messageDispatch({ type: "MISC_ERROR", error: exception });
     }
   };
 
   const addBlog = async (blogObject) => {
     try {
-      await newBlogMutation.mutateAsync(blogObject, user.token)
+      await newBlogMutation.mutateAsync(blogObject, user.token);
       blogFormRef.current.toggleVisibility();
-      messageDispatch({ type: 'BLOG_CREATE', title: blogObject.title, author: blogObject.author });
+      messageDispatch({
+        type: "BLOG_CREATE",
+        title: blogObject.title,
+        author: blogObject.author,
+      });
     } catch (exception) {
       console.log(exception);
-      messageDispatch({ type: 'MISC_ERROR', error: exception});
+      messageDispatch({ type: "MISC_ERROR", error: exception });
     }
   };
 
@@ -107,20 +114,20 @@ const App = () => {
     const likes = event.likes + 1;
     const likedBlog = { ...event, likes };
     try {
-      await updateBlogMutation.mutateAsync(likedBlog)
-      messageDispatch({ type: 'BLOG_LIKE', title: likedBlog.title})
+      await updateBlogMutation.mutateAsync(likedBlog);
+      messageDispatch({ type: "BLOG_LIKE", title: likedBlog.title });
     } catch (exception) {
-      messageDispatch({ type: 'MISC_ERROR', error: exception});
+      messageDispatch({ type: "MISC_ERROR", error: exception });
     }
   };
 
   const handleRemove = async (event) => {
     if (window.confirm(`Remove blog ${event.title} by ${event.author}?`)) {
       try {
-        await removeBlogMutation.mutateAsync(event.id, user.token)
-        messageDispatch({ type: 'BLOG_REMOVE', title: event.title});
+        await removeBlogMutation.mutateAsync(event.id, user.token);
+        messageDispatch({ type: "BLOG_REMOVE", title: event.title });
       } catch (exception) {
-        messageDispatch({ type: 'MISC_ERROR', error: exception});
+        messageDispatch({ type: "MISC_ERROR", error: exception });
       }
     }
   };
@@ -129,7 +136,7 @@ const App = () => {
     return (
       <div>
         <h2>Log in</h2>
-        <Notification/>
+        <Notification />
         <form onSubmit={handleLogin}>
           <div>
             username
@@ -162,7 +169,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification/>
+      <Notification />
       <p>{user.username} logged in</p>
       <button id="logout-Button" onClick={handleLogout}>
         logout

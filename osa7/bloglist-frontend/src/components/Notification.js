@@ -1,8 +1,8 @@
-import { useContext } from 'react'
-import { useMessageValue } from '../Context'
+import { useContext } from "react";
+import { useMessageValue } from "../Context";
 
 const Notification = () => {
-  const message = useMessageValue()
+  const message = useMessageValue();
 
   if (!message) {
     // Return null when there is no message
@@ -14,6 +14,6 @@ const Notification = () => {
   }
 
   return <div className="success">{message}</div>;
-}
+};
 
 export default Notification;
