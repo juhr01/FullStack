@@ -12,7 +12,6 @@ const App = () => {
   const queryClient = useQueryClient();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  //const [user, authDispatch] = useState(null);
   const blogFormRef = useRef();
 
   const user = useAuthState();
@@ -37,9 +36,6 @@ const App = () => {
   });
 
   const updateBlogMutation = useMutation(blogService.update, {
-    /*  onSuccess: () => {
-      queryClient.invalidateQueries('blogs')
-    }, */
     onSuccess: (updatedBlog) => {
       queryClient.setQueryData("blogs", (oldData) => {
         return oldData.map((blog) =>
