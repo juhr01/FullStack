@@ -1,18 +1,21 @@
 import { useState, useEffect, useRef, useReducer } from "react";
-import Blog from "./components/Blog";
+import Blogs from './components/Blogs'
 import Notification from "./components/Notification";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
-import Togglable from "./components/Togglable";
-import BlogForm from "./components/BlogForm";
+import Menu from './components/Menu'
+import Users from './components/Users'
 import { useMessageDispatch, useAuthDispatch, useAuthState } from "./Context";
 import { useQuery, useMutation, useQueryClient } from "react-query";
+import {
+  BrowserRouter as Router,
+  Routes, Route, Link, useParams, useNavigate
+} from 'react-router-dom'
 
 const App = () => {
   const queryClient = useQueryClient();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const blogFormRef = useRef();
 
   const user = useAuthState();
 
@@ -27,40 +30,6 @@ const App = () => {
       blogService.setToken(user.token);
     }
   }, []);
-
-  const newBlogMutation = useMutation(blogService.create, {
-    onSuccess: (newBlog) => {
-      const blogs = queryClient.getQueryData("blogs");
-      queryClient.setQueryData("blogs", blogs.concat(newBlog));
-    },
-  });
-
-  const updateBlogMutation = useMutation(blogService.update, {
-    onSuccess: (updatedBlog) => {
-      queryClient.setQueryData("blogs", (oldData) => {
-        return oldData.map((blog) =>
-          blog.id === updatedBlog.id ? updatedBlog : blog,
-        );
-      });
-    },
-  });
-
-  const removeBlogMutation = useMutation(blogService.remove, {
-    onSuccess: () => {
-      queryClient.invalidateQueries("blogs");
-    },
-  });
-
-  const result = useQuery("blogs", blogService.getAll, {
-    retry: 1,
-    refetchOnWindowFocus: false,
-  });
-
-  if (result.isLoading) {
-    return <div>loading data...</div>;
-  }
-
-  const blogs = result.data;
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -88,43 +57,6 @@ const App = () => {
       authDispatch({ type: "LOGOUT" });
     } catch (exception) {
       messageDispatch({ type: "MISC_ERROR", error: exception });
-    }
-  };
-
-  const addBlog = async (blogObject) => {
-    try {
-      await newBlogMutation.mutateAsync(blogObject, user.token);
-      blogFormRef.current.toggleVisibility();
-      messageDispatch({
-        type: "BLOG_CREATE",
-        title: blogObject.title,
-        author: blogObject.author,
-      });
-    } catch (exception) {
-      console.log(exception);
-      messageDispatch({ type: "MISC_ERROR", error: exception });
-    }
-  };
-
-  const handleLikeChange = async (event) => {
-    const likes = event.likes + 1;
-    const likedBlog = { ...event, likes };
-    try {
-      await updateBlogMutation.mutateAsync(likedBlog);
-      messageDispatch({ type: "BLOG_LIKE", title: likedBlog.title });
-    } catch (exception) {
-      messageDispatch({ type: "MISC_ERROR", error: exception });
-    }
-  };
-
-  const handleRemove = async (event) => {
-    if (window.confirm(`Remove blog ${event.title} by ${event.author}?`)) {
-      try {
-        await removeBlogMutation.mutateAsync(event.id, user.token);
-        messageDispatch({ type: "BLOG_REMOVE", title: event.title });
-      } catch (exception) {
-        messageDispatch({ type: "MISC_ERROR", error: exception });
-      }
     }
   };
 
@@ -163,30 +95,22 @@ const App = () => {
   }
 
   return (
+    <Router>
     <div>
+      <Menu user={user.username}/>
       <h2>blogs</h2>
       <Notification />
-      <p>{user.username} logged in</p>
       <button id="logout-Button" onClick={handleLogout}>
         logout
       </button>
       <br />
       <br />
-      <Togglable buttonLabel="new blog" ref={blogFormRef}>
-        <BlogForm createBlog={addBlog} />
-      </Togglable>
-      <br />
-      {blogs
-        .sort((a, b) => b.likes - a.likes)
-        .map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            handleLikeChange={handleLikeChange}
-            handleRemove={handleRemove}
-          />
-        ))}
+      <Routes>
+        <Route path='/' element={<Blogs />} />
+        <Route path='/users' element={<Users />} />
+        </Routes>
     </div>
+    </Router>
   );
 };
 
