@@ -6,14 +6,13 @@ import loginService from "./services/login";
 import Menu from './components/Menu'
 import Users from './components/Users'
 import { useMessageDispatch, useAuthDispatch, useAuthState } from "./Context";
-import { useQuery, useMutation, useQueryClient } from "react-query";
+import { useQueryClient } from "react-query";
 import {
   BrowserRouter as Router,
   Routes, Route, Link, useParams, useNavigate
 } from 'react-router-dom'
 
 const App = () => {
-  const queryClient = useQueryClient();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -98,7 +97,6 @@ const App = () => {
     <Router>
     <div>
       <Menu user={user.username}/>
-      <h2>blogs</h2>
       <Notification />
       <button id="logout-Button" onClick={handleLogout}>
         logout

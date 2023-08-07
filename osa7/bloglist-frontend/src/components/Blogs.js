@@ -3,7 +3,7 @@ import Togglable from "./Togglable";
 import BlogForm from "./BlogForm";
 import Blog from './Blog'
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import { useMessageDispatch, useAuthDispatch, useAuthState } from "../Context";
+import { useMessageDispatch, useAuthState } from "../Context";
 import blogService from "../services/blogs";
 
 const Blogs = (props) => {
@@ -86,6 +86,7 @@ const addBlog = async (blogObject) => {
 
     return (
         <div>
+          <h2>Blogs</h2>
             <Togglable buttonLabel="new blog" ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
       </Togglable>
