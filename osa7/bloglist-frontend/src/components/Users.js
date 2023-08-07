@@ -1,7 +1,6 @@
 import blogService from '../services/blogs'
 import { useQuery } from "react-query";
 import { Link } from 'react-router-dom'
-import Blogs from './Blogs';
 
 const Users = () => {
 
@@ -37,7 +36,7 @@ const Users = () => {
             </tr>
             {users.map(user =>
                 <tr key={user}>
-                    <td>{user}</td>
+                    <td><Link to={`/users/${blogsByUser[user][0].user.id}`}>{user}</Link></td>
                     <td>{blogsByUser[user].length}</td>
                 </tr>
             )}

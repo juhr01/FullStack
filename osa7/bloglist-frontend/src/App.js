@@ -5,6 +5,7 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 import Menu from './components/Menu'
 import Users from './components/Users'
+import User from './components/User'
 import { useMessageDispatch, useAuthDispatch, useAuthState } from "./Context";
 import { useQueryClient } from "react-query";
 import {
@@ -106,6 +107,7 @@ const App = () => {
       <Routes>
         <Route path='/' element={<Blogs />} />
         <Route path='/users' element={<Users />} />
+        <Route path='/users/:id' element={<User />} />
         </Routes>
     </div>
     </Router>
