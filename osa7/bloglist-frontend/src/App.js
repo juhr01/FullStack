@@ -7,7 +7,7 @@ import Menu from './components/Menu'
 import Users from './components/Users'
 import User from './components/User'
 import { useMessageDispatch, useAuthDispatch, useAuthState } from "./Context";
-import { useQueryClient } from "react-query";
+import { useQueryClient, useQuery } from "react-query";
 import {
   BrowserRouter as Router,
   Routes, Route, Link, useParams, useNavigate
