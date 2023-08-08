@@ -36,7 +36,7 @@ const Blog = ({ blog, handleLikeChange, handleRemove }) => {
     <div style={blogStyle} id={blog.title}>
       <div style={hideDetailsWhenVisible} className="blogTitle">
         <p id="blogTitleHidden">
-          {blog.title} {blog.author}{" "}
+          {blog.title} by {blog.author}{" "}
           <button onClick={toggleVisibility} id="viewDetails-Button">
             view
           </button>
@@ -44,18 +44,18 @@ const Blog = ({ blog, handleLikeChange, handleRemove }) => {
       </div>
       <div style={showDetailsWhenVisible} className="blogDetails">
         <p id="blogTitleVisible">
-          {blog.title} {blog.author}{" "}
+          {blog.title} by {blog.author}{" "}
           <button onClick={toggleVisibility}>hide</button>
         </p>
-        <p id="blogUrl">{blog.url}</p>
+        <p id="blogUrl">URL: {blog.url}</p>
         <p id="blogLikes">
-          likes {blog.likes}{" "}
+          Likes: {blog.likes}{" "}
           <button id="like-Button" onClick={() => handleLikeChange(blog)}>
             like
           </button>
           <br />
         </p>
-        <p id="blogUserUsername">{blog.user.username}</p>
+        <p id="blogUserUsername">Added by: {blog.user.username}</p>
         <button
           id="blogRemove-Button"
           style={hideWhenNotLogged}
