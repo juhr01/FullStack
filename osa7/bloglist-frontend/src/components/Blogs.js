@@ -1,10 +1,10 @@
 import { useRef } from 'react'
 import Togglable from "./Togglable";
 import BlogForm from "./BlogForm";
-import Blog from './Blog'
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { useMessageDispatch, useAuthState } from "../Context";
 import blogService from "../services/blogs";
+import { Link } from 'react-router-dom'
 
 const Blogs = (props) => {
     const queryClient = useQueryClient();
@@ -15,22 +15,6 @@ const newBlogMutation = useMutation(blogService.create, {
     onSuccess: (newBlog) => {
       const blogs = queryClient.getQueryData("blogs");
       queryClient.setQueryData("blogs", blogs.concat(newBlog));
-    },
-  });
-
-  const updateBlogMutation = useMutation(blogService.update, {
-    onSuccess: (updatedBlog) => {
-      queryClient.setQueryData("blogs", (oldData) => {
-        return oldData.map((blog) =>
-          blog.id === updatedBlog.id ? updatedBlog : blog,
-        );
-      });
-    },
-  });
-
-  const removeBlogMutation = useMutation(blogService.remove, {
-    onSuccess: () => {
-      queryClient.invalidateQueries("blogs");
     },
   });
 
@@ -62,46 +46,33 @@ const addBlog = async (blogObject) => {
     }
   };
 
-  const handleLikeChange = async (event) => {
-    const likes = event.likes + 1;
-    const likedBlog = { ...event, likes };
-    try {
-      await updateBlogMutation.mutateAsync(likedBlog);
-      messageDispatch({ type: "BLOG_LIKE", title: likedBlog.title });
-    } catch (exception) {
-      messageDispatch({ type: "MISC_ERROR", error: exception });
-    }
-  };
-
-  const handleRemove = async (event) => {
-    if (window.confirm(`Remove blog ${event.title} by ${event.author}?`)) {
-      try {
-        await removeBlogMutation.mutateAsync(event.id, user.token);
-        messageDispatch({ type: "BLOG_REMOVE", title: event.title });
-      } catch (exception) {
-        messageDispatch({ type: "MISC_ERROR", error: exception });
-      }
-    }
+  const blogStyle = {
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: 4,
+    border: "solid",
+    borderWidth: 1,
+    marginBottom: 5,
   };
 
     return (
-        <div>
-          <h2>Blogs</h2>
+      <div>
+        <h2>Blogs</h2>
+        <h2>Blogs</h2>
             <Togglable buttonLabel="new blog" ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
       </Togglable>
       <br />
+      <ul>
       {blogs
         .sort((a, b) => b.likes - a.likes)
         .map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            handleLikeChange={handleLikeChange}
-            handleRemove={handleRemove}
-          />
+          <li key={blog.id} style={blogStyle}>
+          <Link to={`/blogs/${blog.id}`}>{blog.title} by {blog.author}</Link>
+          </li>
         ))}
-        </div>
+      </ul>
+      </div>
     )
 }
 

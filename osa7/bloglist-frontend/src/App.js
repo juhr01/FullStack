@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useReducer } from "react";
 import Blogs from './components/Blogs'
+import Blog from './components/Blog'
 import Notification from "./components/Notification";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
@@ -7,13 +8,14 @@ import Menu from './components/Menu'
 import Users from './components/Users'
 import User from './components/User'
 import { useMessageDispatch, useAuthDispatch, useAuthState } from "./Context";
-import { useQueryClient, useQuery } from "react-query";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import {
   BrowserRouter as Router,
   Routes, Route, Link, useParams, useNavigate
 } from 'react-router-dom'
 
 const App = () => {
+  const queryClient = useQueryClient();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -30,6 +32,7 @@ const App = () => {
       blogService.setToken(user.token);
     }
   }, []);
+  
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -57,6 +60,55 @@ const App = () => {
       authDispatch({ type: "LOGOUT" });
     } catch (exception) {
       messageDispatch({ type: "MISC_ERROR", error: exception });
+    }
+  };
+
+  const updateBlogMutation = useMutation(blogService.update, {
+    onSuccess: (updatedBlog) => {
+      queryClient.setQueryData("blogs", (oldData) => {
+        return oldData.map((blog) =>
+          blog.id === updatedBlog.id ? updatedBlog : blog,
+        );
+      });
+    },
+  });
+
+  const removeBlogMutation = useMutation(blogService.remove, {
+    onSuccess: () => {
+      queryClient.invalidateQueries("blogs");
+    },
+  });
+  
+  const blogsResult = useQuery("blogs", blogService.getAll, {
+    retry: 1,
+    refetchOnWindowFocus: false,
+});
+
+if (blogsResult.isLoading) {
+  return <div>loading data...</div>;
+}
+
+const blogs = blogsResult.data;
+  
+  const handleLikeChange = async (event) => {
+    const likes = event.likes + 1;
+    const likedBlog = { ...event, likes };
+    try {
+      await updateBlogMutation.mutateAsync(likedBlog);
+      messageDispatch({ type: "BLOG_LIKE", title: likedBlog.title });
+    } catch (exception) {
+      messageDispatch({ type: "MISC_ERROR", error: exception });
+    }
+  };
+
+  const handleRemove = async (event) => {
+    if (window.confirm(`Remove blog ${event.title} by ${event.author}?`)) {
+      try {
+        await removeBlogMutation.mutateAsync(event.id, user.token);
+        messageDispatch({ type: "BLOG_REMOVE", title: event.title });
+      } catch (exception) {
+        messageDispatch({ type: "MISC_ERROR", error: exception });
+      }
     }
   };
 
@@ -108,6 +160,7 @@ const App = () => {
         <Route path='/' element={<Blogs />} />
         <Route path='/users' element={<Users />} />
         <Route path='/users/:id' element={<User />} />
+        <Route path='/blogs/:id' element={<Blog blogs={blogs} handleLikeChange={handleLikeChange} handleRemove={handleRemove}/>}/>
         </Routes>
     </div>
     </Router>

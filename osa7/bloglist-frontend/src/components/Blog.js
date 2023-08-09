@@ -1,63 +1,40 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from 'react-router-dom'
 
-const Blog = ({ blog, handleLikeChange, handleRemove }) => {
-  const [visible, setVisible] = useState(false);
+const Blog = ({ blogs, handleLikeChange, handleRemove }) => {
+  const { id } = useParams()
   const [removeVisible, setRemoveVisible] = useState(false);
 
-  const hideDetailsWhenVisible = { display: visible ? "none" : "" };
-  const showDetailsWhenVisible = { display: visible ? "" : "none" };
-
-  const hideWhenNotLogged = { display: removeVisible ? "none" : "" };
+  const blog = blogs.find(b => b.id === id)
 
   const loggedBloglistUser = JSON.parse(
     localStorage.getItem("loggedBloglistUser"),
   );
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingBottom: 10,
-    paddingLeft: 4,
-    border: "solid",
-    borderWidth: 1,
-    marginBottom: 5,
-  };
-
-  const toggleVisibility = () => {
-    setVisible(!visible);
-    if (
-      loggedBloglistUser &&
-      blog.user.username !== loggedBloglistUser.username
-    ) {
+  useEffect(() => {
+    if (loggedBloglistUser && blog.user.username !== loggedBloglistUser.username) {
       setRemoveVisible(true);
     }
-  };
+  }, [loggedBloglistUser, blog]);
+
+  const hideWhenNotLogged = { display: removeVisible ? "none" : "" };
 
   return (
-    <div style={blogStyle} id={blog.title}>
-      <div style={hideDetailsWhenVisible} className="blogTitle">
-        <p id="blogTitleHidden">
+    <div id={blog.title}>
+      <div>
+        <h2>
           {blog.title} by {blog.author}{" "}
-          <button onClick={toggleVisibility} id="viewDetails-Button">
-            view
-          </button>
-        </p>
-      </div>
-      <div style={showDetailsWhenVisible} className="blogDetails">
-        <p id="blogTitleVisible">
-          {blog.title} by {blog.author}{" "}
-          <button onClick={toggleVisibility}>hide</button>
-        </p>
-        <p id="blogUrl">URL: {blog.url}</p>
-        <p id="blogLikes">
+        </h2>
+        <p>URL: {blog.url}</p>
+        <p>
           Likes: {blog.likes}{" "}
           <button id="like-Button" onClick={() => handleLikeChange(blog)}>
             like
           </button>
           <br />
         </p>
-        <p id="blogUserUsername">Added by: {blog.user.username}</p>
+        <p>Added by: {blog.user.username}</p>
         <button
-          id="blogRemove-Button"
           style={hideWhenNotLogged}
           onClick={() => handleRemove(blog)}
         >
