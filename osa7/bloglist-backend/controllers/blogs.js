@@ -2,6 +2,7 @@ const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
+const mongoose = require('mongoose')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
@@ -115,6 +116,32 @@ blogsRouter.put('/:id', async (request, response, next) => {
     }
   })
   .catch(error => next(error)) */
+})
+
+blogsRouter.get('/:id/comments', async (request, response) => {
+  const id = mongoose.Types.ObjectId(request.params.id)
+  
+  const blog = await Blog.findById(id)
+  if (!blog) {
+    return response.status(404).json({ error: 'blog not found'})
+  }
+  response.json(blog.comments)
+})
+
+blogsRouter.post('/:id/comments', async (request, response) => {
+  const  { comment } = request.body
+  const blog = await Blog.findById(request.params.id).populate("user", {
+    username: 1,
+    name: 1,
+  })
+
+  blog.comments = blog.comments.concat(comment)
+  
+  const updatedBlog = await blog.save()
+
+  updatedBlog
+  ? response.status(200).json(updatedBlog.toJSON())
+  : response.status(404).end();
 })
 
 module.exports = blogsRouter
