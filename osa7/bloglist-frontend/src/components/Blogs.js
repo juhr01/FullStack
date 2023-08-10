@@ -1,17 +1,25 @@
-import { useRef } from 'react'
+import { useRef } from "react";
 import Togglable from "./Togglable";
 import BlogForm from "./BlogForm";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { useMessageDispatch, useAuthState } from "../Context";
 import blogService from "../services/blogs";
-import { Link } from 'react-router-dom'
+import { Link } from "react-router-dom";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Paper,
+} from "@mui/material";
 
 const Blogs = (props) => {
-    const queryClient = useQueryClient();
-    const messageDispatch = useMessageDispatch();
-    const user = useAuthState();
+  const queryClient = useQueryClient();
+  const messageDispatch = useMessageDispatch();
+  const user = useAuthState();
 
-const newBlogMutation = useMutation(blogService.create, {
+  const newBlogMutation = useMutation(blogService.create, {
     onSuccess: (newBlog) => {
       const blogs = queryClient.getQueryData("blogs");
       queryClient.setQueryData("blogs", blogs.concat(newBlog));
@@ -31,7 +39,7 @@ const newBlogMutation = useMutation(blogService.create, {
 
   const blogs = result.data;
 
-const addBlog = async (blogObject) => {
+  const addBlog = async (blogObject) => {
     try {
       await newBlogMutation.mutateAsync(blogObject, user.token);
       blogFormRef.current.toggleVisibility();
@@ -46,33 +54,33 @@ const addBlog = async (blogObject) => {
     }
   };
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingBottom: 10,
-    paddingLeft: 4,
-    border: "solid",
-    borderWidth: 1,
-    marginBottom: 5,
-  };
-
-    return (
-      <div>
-        <h2>Blogs</h2>
-            <Togglable buttonLabel="new blog" ref={blogFormRef}>
+  return (
+    <div>
+      <h2>Blogs</h2>
+      <Togglable buttonLabel="new blog" ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
       </Togglable>
-      <br />
-      <ul>
-      {blogs
-        .sort((a, b) => b.likes - a.likes)
-        .map((blog) => (
-          <li key={blog.id} style={blogStyle}>
-          <Link to={`/blogs/${blog.id}`}>{blog.title} by {blog.author}</Link>
-          </li>
-        ))}
-      </ul>
-      </div>
-    )
-}
+      <TableContainer component={Paper}>
+        <Table>
+          <TableBody>
+            <br />
+            <ul>
+              {blogs
+                .sort((a, b) => b.likes - a.likes)
+                .map((blog) => (
+                  <TableRow key={blog.id}>
+                    <TableCell>
+                      <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+                    </TableCell>
+                    <TableCell>{blog.author}</TableCell>
+                  </TableRow>
+                ))}
+            </ul>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
+  );
+};
 
-export default Blogs
+export default Blogs;

@@ -1,5 +1,5 @@
-import { useContext } from "react";
 import { useMessageValue } from "../Context";
+import { Alert } from "@mui/material";
 
 const Notification = () => {
   const message = useMessageValue();
@@ -10,10 +10,14 @@ const Notification = () => {
   }
 
   if (message && message.includes("error")) {
-    return <div className="error">{message.substring(5)}</div>;
+    return (
+      <div>
+        {message && <Alert severity="error">{message.substring(5)}</Alert>}
+      </div>
+    );
   }
 
-  return <div className="success">{message}</div>;
+  return <div>{message && <Alert severity="success">{message}</Alert>}</div>;
 };
 
 export default Notification;

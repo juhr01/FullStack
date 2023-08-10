@@ -1,63 +1,71 @@
 import { useState, useEffect } from "react";
-import { useParams } from 'react-router-dom'
-import blogService from '../services/blogs'
-import { useQueryClient, useQuery } from 'react-query'
+import { useParams } from "react-router-dom";
+import blogService from "../services/blogs";
+import { useQueryClient, useQuery } from "react-query";
 import { useMessageDispatch } from "../Context";
-import HandleRemoveButton from './HandleRemoveButton';
+import HandleRemoveButton from "./HandleRemoveButton";
+import { Button, TextField } from "@mui/material";
 
 const Blog = ({ blogs, handleLikeChange, handleRemove, user }) => {
-  const queryClient = useQueryClient()
-  const { id } = useParams()
-  const [removeVisible, setRemoveVisible] = useState(false);
-  const [comment, setComment] = useState('')
-  const messageDispatch = useMessageDispatch()
+  const queryClient = useQueryClient();
+  const { id } = useParams();
+  const [, setRemoveVisible] = useState(false);
+  const [comment, setComment] = useState("");
+  const messageDispatch = useMessageDispatch();
 
-  const blog = blogs.find(b => b.id === id)
+  const blog = blogs.find((b) => b.id === id);
 
   const loggedBloglistUser = JSON.parse(
     localStorage.getItem("loggedBloglistUser"),
   );
 
   useEffect(() => {
-    console.log(blog)
-    if (loggedBloglistUser && blog.user.username !== loggedBloglistUser.username) {
+    console.log(blog);
+    if (
+      loggedBloglistUser &&
+      blog.user.username !== loggedBloglistUser.username
+    ) {
       setRemoveVisible(true);
     }
   }, [loggedBloglistUser, blog]);
 
-  const commentsResult = useQuery(['comments', id], () => blogService.getComments(id), {
-    retry: 1,
-    refetchOnWindowFocus: false,
-  })
+  const commentsResult = useQuery(
+    ["comments", id],
+    () => blogService.getComments(id),
+    {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  );
 
   if (commentsResult.isLoading) {
-    return <div>loading data...</div>
+    return <div>loading data...</div>;
   }
 
-  const comments = commentsResult.data
+  const comments = commentsResult.data;
 
   const handleComment = async (event) => {
-    event.preventDefault()
-    const response = await blogService.addComment(blog.id, { comment: comment })
-
+    event.preventDefault();
+    const response = await blogService.addComment(blog.id, {
+      comment: comment,
+    });
 
     if (!comment.trim()) {
-      messageDispatch({ type: "MISC_ERROR", error: 'comment empty' });
+      messageDispatch({ type: "MISC_ERROR", error: "comment empty" });
       return;
     }
 
     if (response) {
       try {
-        queryClient.invalidateQueries(['comments', id])
+        queryClient.invalidateQueries(["comments", id]);
         messageDispatch({ type: "BLOG_COMMENT", title: blog.title });
-
       } catch (exception) {
         messageDispatch({ type: "MISC_ERROR", error: exception });
       }
     }
 
-    setComment('')
-  }
+    setComment("");
+  };
 
   return (
     <div id={blog.title}>
@@ -68,32 +76,33 @@ const Blog = ({ blogs, handleLikeChange, handleRemove, user }) => {
         <p>URL: {blog.url}</p>
         <p>
           Likes: {blog.likes}{" "}
-          <button id="like-Button" onClick={() => handleLikeChange(blog)}>
+          <Button variant="contained" id="like-Button" onClick={() => handleLikeChange(blog)}>
             like
-          </button>
+          </Button>
           <br />
         </p>
         <p>Added by: {blog.user.username}</p>
         <HandleRemoveButton
-            blogId={blog.id}
-            token={user.token}
-            title={blog.title}
-            author={blog.author}
-            blogTitle={blog.title}
-          />
+          blogId={blog.id}
+          token={user.token}
+          title={blog.title}
+          author={blog.author}
+          blogTitle={blog.title}
+        />
         <h3>Comments</h3>
         <form onSubmit={handleComment}>
-          <input
+          <TextField
             placeholder="comment..."
-            value={comment}
-            onChange={event => setComment(event.target.value)}
-          />
-          <button type="submit">add comment</button>
+            onChange={(event) => setComment(event.target.value)}
+          ></TextField>
+          <Button variant="contained" type="submit">add comment</Button>
         </form>
         <ul>
-          {comments.filter(c => c !== null).map(com => (
-            <li key={com}>{com}</li>
-          ))}
+          {comments
+            .filter((c) => c !== null)
+            .map((com) => (
+              <li key={com}>{com}</li>
+            ))}
         </ul>
       </div>
     </div>

@@ -8,8 +8,8 @@ const messageReducer = (state, action) => {
       return `Blog ${action.title} added by ${action.author}`;
     case "BLOG_LIKE":
       return `Blog ${action.title} liked`;
-      case "BLOG_COMMENT":
-        return `Blog ${action.title} commented`
+    case "BLOG_COMMENT":
+      return `Blog ${action.title} commented`;
     case "BLOG_REMOVE":
       return `Blog ${action.title} removed`;
     case "CLEAR":

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 import axios from "axios";
 const baseUrl = "/api/blogs";
 
@@ -43,14 +44,22 @@ const remove = async (id) => {
   return request.data;
 };
 
-const getComments = async id => {
-  const response = await axios.get(`${baseUrl}/${id}/comments`)
-  return response.data
-}
+const getComments = async (id) => {
+  const response = await axios.get(`${baseUrl}/${id}/comments`);
+  return response.data;
+};
 
 const addComment = async (id, comment) => {
-  const request = await axios.post(`${baseUrl}/${id}/comments`, comment)
-  return request.data
-}
+  const request = await axios.post(`${baseUrl}/${id}/comments`, comment);
+  return request.data;
+};
 
-export default { getAll, create, update, setToken, remove, getComments, addComment };
+export default {
+  getAll,
+  create,
+  update,
+  setToken,
+  remove,
+  getComments,
+  addComment,
+};
