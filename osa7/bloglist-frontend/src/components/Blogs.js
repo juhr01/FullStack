@@ -58,7 +58,6 @@ const addBlog = async (blogObject) => {
     return (
       <div>
         <h2>Blogs</h2>
-        <h2>Blogs</h2>
             <Togglable buttonLabel="new blog" ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
       </Togglable>

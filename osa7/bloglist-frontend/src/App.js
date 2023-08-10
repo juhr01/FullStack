@@ -11,7 +11,7 @@ import { useMessageDispatch, useAuthDispatch, useAuthState } from "./Context";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import {
   BrowserRouter as Router,
-  Routes, Route, Link, useParams, useNavigate
+  Routes, Route, Link, useParams, useNavigate, useHistory
 } from 'react-router-dom'
 
 const App = () => {
@@ -22,7 +22,7 @@ const App = () => {
   const user = useAuthState();
 
   const authDispatch = useAuthDispatch();
-  const messageDispatch = useMessageDispatch();
+  const messageDispatch = useMessageDispatch()
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBloglistUser");
@@ -64,12 +64,8 @@ const App = () => {
   };
 
   const updateBlogMutation = useMutation(blogService.update, {
-    onSuccess: (updatedBlog) => {
-      queryClient.setQueryData("blogs", (oldData) => {
-        return oldData.map((blog) =>
-          blog.id === updatedBlog.id ? updatedBlog : blog,
-        );
-      });
+    onSuccess: () => {
+      queryClient.invalidateQueries('blogs')
     },
   });
 
@@ -100,7 +96,7 @@ const blogs = blogsResult.data;
       messageDispatch({ type: "MISC_ERROR", error: exception });
     }
   };
-
+/* 
   const handleRemove = async (event) => {
     if (window.confirm(`Remove blog ${event.title} by ${event.author}?`)) {
       try {
@@ -110,7 +106,7 @@ const blogs = blogsResult.data;
         messageDispatch({ type: "MISC_ERROR", error: exception });
       }
     }
-  };
+  }; */
 
   if (user === null) {
     return (
@@ -160,7 +156,7 @@ const blogs = blogsResult.data;
         <Route path='/' element={<Blogs />} />
         <Route path='/users' element={<Users />} />
         <Route path='/users/:id' element={<User />} />
-        <Route path='/blogs/:id' element={<Blog blogs={blogs} handleLikeChange={handleLikeChange} handleRemove={handleRemove}/>}/>
+        <Route path='/blogs/:id' element={<Blog blogs={blogs} handleLikeChange={handleLikeChange} user={user}/>}/>
         </Routes>
     </div>
     </Router>

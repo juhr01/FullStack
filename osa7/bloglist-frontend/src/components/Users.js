@@ -1,30 +1,22 @@
-import blogService from '../services/blogs'
+import userService from '../services/users'
 import { useQuery } from "react-query";
 import { Link } from 'react-router-dom'
 
 const Users = () => {
 
-    const result = useQuery("blogs", blogService.getAll, {
-        retry: 1,
-        refetchOnWindowFocus: false,
-      });
-    
-      if (result.isLoading) {
-        return <div>loading data...</div>;
-      }
-    
-      const blogs = result.data;
+const result = useQuery("users", userService.getAll, {
+    retry: 1,
+    refetchOnWindowFocus: false,
+});
 
-      const blogsByUser = blogs.reduce((acc, blog) => {
-        const user = blog.user.username
-        if (!acc[user]) {
-          acc[user] = []
-        }
-        acc[user].push(blog)
-        return acc
-      }, {})
-    
-      const users = Object.keys(blogsByUser);
+if (result.isLoading) {
+    return <div>loading data...</div>;
+}
+
+const users = result.data;
+console.log(users)
+
+     
 
     return (
         <div>
@@ -35,9 +27,9 @@ const Users = () => {
                 <th>blogs created</th>
             </tr>
             {users.map(user =>
-                <tr key={user}>
-                    <td><Link to={`/users/${blogsByUser[user][0].user.id}`}>{user}</Link></td>
-                    <td>{blogsByUser[user].length}</td>
+                <tr key={user.id}>
+                    <td><Link to={`/users/${user.id}`}>{user.username}</Link></td>
+                    <td>{user.blogs.length}</td>
                 </tr>
             )}
             </table>
