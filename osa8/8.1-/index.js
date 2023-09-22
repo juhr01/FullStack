@@ -100,6 +100,7 @@ let books = [
 const typeDefs = `
   type Author {
     name: String!
+    born: Int
     bookCount: Int!
   }
 
@@ -116,6 +117,19 @@ const typeDefs = `
     authorCount: Int!
     allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
+  }
+
+  type Mutation {
+    addBook(
+      title: String!
+      author: String!
+      published: Int!
+      genres: [String!]!
+    ): Book
+
+    newAuthor(
+      name: String!
+    ): Author
   }
 `
 
@@ -143,6 +157,42 @@ const resolvers = {
     },
     allAuthors: () => authors,
   },
+  Mutation: {
+    addBook: (root, args) => {
+
+      let author = authors.find(author => author.name === args.author)
+
+      if (!author) {
+        author = {
+          name: args.author
+        }
+        
+        authors.push(author)
+      }
+
+      const newBook = {
+        title: args.title,
+        author: args.author,
+        published: args.published,
+        genres: args.genres
+      }
+      books.push(newBook)
+      return newBook
+    },
+    newAuthor: (root, args) => {
+      const authorExists = authors.find(author => author.name === args.name)
+        if (authorExists) {
+          throw new Error("Author already exists")
+        }
+        
+        const newAuthor = {
+          name: args.name
+        }
+
+        authors.push(newAuthor)
+        return newAuthor
+    }
+  },
   Book: {
     title: (root) => root.title,
     published: (root) => root.published,
@@ -153,6 +203,9 @@ const resolvers = {
   Author: {
     bookCount: (root) => {
       return books.filter(book => book.author === root.name).length
+    },
+    born: (root) => {
+      return root.born !== undefined ? root.born : null
     }
   }
 }
