@@ -1,5 +1,6 @@
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
+const { v4: uuidv4 } = require('uuid')
 
 let authors = [
   {
@@ -108,8 +109,8 @@ const typeDefs = `
     title: String!
     published: Int!
     author: String!
-    id: ID!
     genres: [String!]!
+    id: ID!
   }
 
   type Query {
@@ -169,7 +170,8 @@ const resolvers = {
 
       if (!author) {
         author = {
-          name: args.author
+          name: args.author,
+          id: uuidv4()
         }
         
         authors.push(author)
@@ -179,7 +181,8 @@ const resolvers = {
         title: args.title,
         author: args.author,
         published: args.published,
-        genres: args.genres
+        genres: args.genres,
+        id: uuidv4()
       }
       books.push(newBook)
       return newBook
