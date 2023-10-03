@@ -134,7 +134,7 @@ const typeDefs = `
 
     editAuthor(
       name: String!
-      setBornTo: Int!
+      born: Int!
     ): Author
   }
 `
@@ -207,7 +207,7 @@ const resolvers = {
         return null
       }
 
-      author.born = args.setBornTo
+      author.born = args.born
       return author
     }
   },
