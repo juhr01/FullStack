@@ -20,6 +20,8 @@ const result = useQuery(ALL_AUTHORS, {
     return null
   }
 
+  console.log(result.data.allAuthors)
+
   const submit = async (event) => {
     event.preventDefault()
 
@@ -54,10 +56,12 @@ const result = useQuery(ALL_AUTHORS, {
       <form onSubmit={submit}>
         <div>
           name
-          <input
-            value={name}
-            onChange={({ target }) => setName(target.value)}
-          />
+          <select value={name} onChange={({ target }) => setName(target.value)}>
+            <option value=''>select author</option>
+            {result.data.allAuthors.map(a => (
+              <option key={a.name} value={a.name}>{a.name}</option>
+            ))}
+          </select>
         </div>
         <div>
           born
