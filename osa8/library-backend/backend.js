@@ -28,8 +28,7 @@ async function startServer() {
   }
 }
 
-
-/* let authors = [
+/*   let authors = [
   {
     name: 'Robert Martin',
     born: 1952,
@@ -93,13 +92,14 @@ let books = [
     author: 'Fyodor Dostoevsky',
     genres: ['classic', 'revolution']
   },
-] */
-
+]
+ */
 const typeDefs = `
   type Author {
     name: String!
     born: Int
     bookCount: Int!
+    id: ID!
   }
 
   type Book {
@@ -138,54 +138,67 @@ const typeDefs = `
 
 const resolvers = {
   Query: {
-    bookCount: () => books.length,
-    authorCount: () => authors.length,
-    allBooks: (root, args) => {
-      if (!args.author && !args.genre) {
-        return books
+    bookCount: async () => Book.collection.countDocuments(),
+    authorCount: () => Author.collection.countDocuments(),
+    allBooks: async (root, args) => {
+      let query = {}
+
+      if (args.author) {
+        query.author = args.author
+      }
+
+      if (args.genre) {
+        query.genre = args.genre
+      }
+
+      const books = await Book.find(query).populate('author')
+      return books
+
+      /* if (!args.author && !args.genre) {
+        return Book
       }
       if (args.author && !args.genre) {
-        return books.filter(book => book.author === args.author)
+        return Book.filter(book => book.author === args.author)
       }
 
       if (!args.author && args.genre) {
-        return books.filter(book => book.genres.includes(args.genre))
+        return Book.filter(book => book.genres.includes(args.genre))
       }
 
       if (args.author && args.genre) {
-        const filteredBooks = books.filter(book => book.genres.includes(args.genre))
+        const filteredBooks = Book.filter(book => book.genres.includes(args.genre))
         return filteredBooks.filter(book => book.author === args.author)
       }
-      
+       */
     },
-    allAuthors: () => authors,
+    allAuthors: async () => {
+      const authors = await Author.find()
+      return authors
+    },
   },
   Mutation: {
-    addBook: (root, args) => {
+    addBook: async (root, args) => {
 
-      let author = authors.find(author => author.name === args.author)
+      let author = await Author.findOne({ name: args.author })
 
       if (!author) {
-        author = {
-          name: args.author,
-          id: uuidv4()
-        }
-        
-        authors.push(author)
+        author = new Author({
+          name: args.author
+        })
+       await author.save()
       }
 
-      const newBook = {
+      const newBook = new Book ({
         title: args.title,
-        author: args.author,
+        author: author._id,
         published: args.published,
         genres: args.genres,
-        id: uuidv4()
-      }
-      books.push(newBook)
+      })
+      await newBook.save()
       return newBook
     },
     newAuthor: (root, args) => {
-      const authorExists = authors.find(author => author.name === args.name)
+      const authorExists = Find.find(author => author.name === args.name)
         if (authorExists) {
           throw new Error("Author already exists")
         }
@@ -194,11 +207,11 @@ const resolvers = {
           name: args.name
         }
 
-        authors.push(newAuthor)
+        Author.push(newAuthor)
         return newAuthor
     },
     editAuthor: (root, args) => {
-      const author = authors.find(author => author.name === args.name)
+      const author = Author.find(author => author.name === args.name)
       
       if (!author) {
         return null
@@ -211,13 +224,16 @@ const resolvers = {
   Book: {
     title: (root) => root.title,
     published: (root) => root.published,
-    author: (root) => root.author,
+    author: async (root) => root.author,
     id: (root) => root.id,
     genres: (root) => root.genres
   },
   Author: {
-    bookCount: (root) => {
-      return books.filter(book => book.author === root.name).length
+    bookCount: async (root) => {
+      const authorName = root.name
+
+      const bookCount = await Book.countDocuments({ author: authorName })
+      return bookCount
     },
     born: (root) => {
       return root.born !== undefined ? root.born : null
@@ -226,19 +242,17 @@ const resolvers = {
 }
 
 startServer();
-
-/* async function populateCollections() {
+/* 
+async function populateCollections() {
   try {
-    // Clear existing data (optional)
-    await Author.deleteMany({});
-    await Book.deleteMany({});
-
+    await Author.deleteMany()
+    await Book.deleteMany()
     // Insert authors into the 'authors' collection
-    await Author.insertMany(authors);
+    const insertedAuthors = await Author.insertMany(authors);
 
     // Update 'author' references in books
     const authorMap = {}; // Map author names to their corresponding MongoDB _id
-    authors.forEach((author) => {
+    insertedAuthors.forEach((author) => {
       authorMap[author.name] = author._id;
     });
     books.forEach((book) => {
@@ -257,4 +271,4 @@ startServer();
 }
 
 // Call the function to populate the collections
-populateCollections(); */
+populateCollections() */
