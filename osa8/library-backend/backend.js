@@ -5,7 +5,7 @@ const config = require('./config')
 const mongoose = require('mongoose')
 const Author = require('./models/author')
 const Book = require('./models/book')
-const author = require('./models/author')
+const { GraphQLError } = require('graphql')
 
 mongoose.set('strictQuery', false)
 
@@ -195,7 +195,18 @@ const resolvers = {
         author = new Author({
           name: args.author
         })
-       await author.save()
+
+        try {
+          await author.save()
+        } catch (error) {
+          throw new GraphQLError('Saving author failed', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.author.name,
+              error
+            }
+          })
+        }
       }
 
       const newBook = new Book ({
@@ -205,7 +216,18 @@ const resolvers = {
         genres: args.genres,
       })
 
-      await newBook.save()
+      try {
+        await newBook.save()
+      } catch (error) {
+        throw new GraphQLError('Saving book failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.title,
+            error
+          }
+        })
+      }
+      
       return {
         title: newBook.title,
         published: newBook.published,
@@ -225,18 +247,29 @@ const resolvers = {
         const newAuthor = new Author({
           name: args.name
         })
-
-        await newAuthor.save()
+        try {
+          await newAuthor.save()
+        } catch (error) {
+          throw new GraphQLError('Saving author failed', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.name,
+              error
+            }
+          })
+        }
+        
         return newAuthor
     },
-    editAuthor: (root, args) => {
-      const author = Author.find(author => author.name === args.name)
+    editAuthor: async (root, args) => {
+      const author = await Author.findOne({ name: args.name })
       
       if (!author) {
         return null
       }
 
       author.born = args.born
+      author.save()
       return author
     }
   },
