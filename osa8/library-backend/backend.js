@@ -5,6 +5,7 @@ const config = require('./config')
 const mongoose = require('mongoose')
 const Author = require('./models/author')
 const Book = require('./models/book')
+const author = require('./models/author')
 
 mongoose.set('strictQuery', false)
 
@@ -157,7 +158,7 @@ const resolvers = {
       }
 
       if (args.genre) {
-        query.genre = args.genre
+        query.genres = args.genre
       }
 
       const books = await Book.find(query).populate('author')
@@ -250,7 +251,9 @@ const resolvers = {
     bookCount: async (root) => {
       const authorName = root.name
 
-      const bookCount = await Book.countDocuments({ author: authorName })
+      const author = await Author.findOne({ name: authorName });
+
+      const bookCount = await Book.countDocuments({ author: author._id })
       return bookCount
     },
     born: (root) => {
