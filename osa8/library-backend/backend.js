@@ -144,7 +144,16 @@ const resolvers = {
       let query = {}
 
       if (args.author) {
-        query.author = args.author
+        // Find the author document by name
+        const author = await Author.findOne({ name: args.author });
+    
+        if (author) {
+          // If the author is found, filter books by author's ObjectId
+          query.author = author._id;
+        } else {
+          // If the author is not found, return an empty array
+          return [];
+        }
       }
 
       if (args.genre) {
@@ -194,20 +203,29 @@ const resolvers = {
         published: args.published,
         genres: args.genres,
       })
+
       await newBook.save()
-      return newBook
+      return {
+        title: newBook.title,
+        published: newBook.published,
+        author: {
+          name: author.name, // Ensure that the author's name is not null
+        },
+        genres: newBook.genres,
+        id: newBook._id,
+      };
     },
-    newAuthor: (root, args) => {
-      const authorExists = Find.find(author => author.name === args.name)
+    newAuthor: async (root, args) => {
+      let authorExists = await Author.findOne({ name: args.author })
         if (authorExists) {
           throw new Error("Author already exists")
         }
         
-        const newAuthor = {
+        const newAuthor = new Author({
           name: args.name
-        }
+        })
 
-        Author.push(newAuthor)
+        await newAuthor.save()
         return newAuthor
     },
     editAuthor: (root, args) => {
