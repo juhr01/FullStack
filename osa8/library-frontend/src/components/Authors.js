@@ -66,6 +66,7 @@ const result = useQuery(ALL_AUTHORS, {
         <div>
           born
           <input
+          type="number"
             value={born}
             onChange={({ target }) => setBorn(parseInt(target.value))}
           />
