@@ -18,11 +18,7 @@ const App = () => {
   }
 
   const style = {
-    padding: "5px",
-    marginBottom: "10px",
-    marginRight: "10px",
     color: "black",
-    border: "1px solid black",
     textDecoration: "none"
   }
 
@@ -30,18 +26,18 @@ const App = () => {
     <Router>
     <div>
       <div>
-        <Link style={style} to="/authors">authors</Link>
-        <Link style={style} to="/books">books</Link>
-        {token ? (<Link style={style} to="/add">add book</Link>) : (null)}
+        <button><Link style={style} to="/authors">authors</Link></button>
+        <button><Link style={style} to="/books">books</Link></button>
+        {token ? (<button><Link style={style} to="/add">add book</Link></button>) : (null)}
         
         {token ? (
-          <Link style={style} to="/authors" onClick={logout}>
+          <button><Link style={style} to="/authors" onClick={logout}>
             logout
-          </Link>
+          </Link></button>
         ) : (
-          <Link style={style} to="/login">
+          <button><Link style={style} to="/login">
             login
-          </Link>
+          </Link></button>
         )}
       </div>
       <Routes>
