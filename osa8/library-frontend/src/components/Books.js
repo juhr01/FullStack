@@ -1,7 +1,7 @@
 import { ALL_BOOKS } from '../queries'
 import { useQuery } from '@apollo/client'
 
-const Books = (props) => {
+const Books = () => {
 
   const result = useQuery(ALL_BOOKS, {
     pollInterval: 2000
@@ -11,10 +11,6 @@ const Books = (props) => {
     return <div>loading...</div>
   }
   console.log(result)
-
-  if (!props.show) {
-    return null
-  }
 
   return (
     <div>
