@@ -59,3 +59,10 @@ export const LOGIN = gql`
     }
   }
 `
+
+export const FAVORITE_GENRE = gql`
+{
+  me {
+    favoriteGenre
+  }
+}`

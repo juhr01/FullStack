@@ -4,6 +4,7 @@ import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
 import EditAuthor from './components/EditAuthor'
+import Recommended from './components/Recommended'
 import { useApolloClient } from '@apollo/client'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 
@@ -28,8 +29,8 @@ const App = () => {
       <div>
         <button><Link style={style} to="/authors">authors</Link></button>
         <button><Link style={style} to="/books">books</Link></button>
-        {token ? (<button><Link style={style} to="/add">add book</Link></button>) : (null)}
-        
+        {token ? (<button><Link style={style} to="/add">add book</Link></button>) : null}
+        {token ? (<button><Link style={style} to="/recommended">recommended</Link></button>) : null}
         {token ? (
           <button><Link style={style} to="/authors" onClick={logout}>
             logout
@@ -41,14 +42,12 @@ const App = () => {
         )}
       </div>
       <Routes>
-        <Route path="/authors" element={<Authors EditAuthor={ token ? (<EditAuthor />) :( null)} />} />
+        <Route path="/authors" element={<Authors EditAuthor={ token ? (<EditAuthor />) : null} />} />
         <Route path="/books" element={<Books />} />
         <Route path="/add" element={<NewBook />} />
-        {token ? (
-          null
-        ) :(
-          <Route path="/login" element={<LoginForm setToken={setToken}/>} />
-        )}
+        <Route path="/recommended" element={<Recommended />} />
+        <Route path="/login" element={<LoginForm setToken={setToken} />} />
+        
       </Routes>
     </div>
     </Router>
