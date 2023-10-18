@@ -66,3 +66,25 @@ export const FAVORITE_GENRE = gql`
     favoriteGenre
   }
 }`
+
+export const BOOK_DETAILS = gql`
+fragment BookDetails on Book {
+  id
+  title
+  author {
+    name
+    born
+    bookCount
+  }
+  published
+  genres
+}
+`
+export const BOOK_ADDED = gql`
+  subscription {
+    bookAdded  {
+      ...BookDetails
+    }
+  }
+  ${BOOK_DETAILS}
+`
