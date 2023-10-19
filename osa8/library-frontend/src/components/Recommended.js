@@ -4,14 +4,12 @@ import { FAVORITE_GENRE, ALL_BOOKS } from '../queries'
 const Recommended = () => {
     const books = useQuery(ALL_BOOKS)
     const favorite = useQuery(FAVORITE_GENRE)
-    if (books.loading) {
+    if ((books.loading && favorite.loading) || books.loading || favorite.loading) {
         return <div>loading...</div>
     }
 
-
     const favoriteGenre = favorite.data.me.favoriteGenre
 
-    console.log(favoriteGenre)
 
     const filteredBooks = books.data.allBooks.filter((book) => book.genres.includes(favoriteGenre));
 

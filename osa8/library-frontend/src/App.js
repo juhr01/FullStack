@@ -5,12 +5,28 @@ import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
 import EditAuthor from './components/EditAuthor'
 import Recommended from './components/Recommended'
-import { useApolloClient } from '@apollo/client'
+import { useApolloClient, useQuery, useSubscription } from '@apollo/client'
+import { BOOK_ADDED } from './queries'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import { ALL_BOOKS } from './queries'
 
 const App = () => {
+  const result = useQuery(ALL_BOOKS)
   const [token, setToken] = useState(null)
   const client = useApolloClient()
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+      const addedBook = data.data.bookAdded
+      window.alert(`Book ${data.data.bookAdded.title} has been added.`)
+
+      client.cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
+        return {
+          allBooks: allBooks.concat(addedBook),
+        }
+      })
+    }
+  })
 
   const logout = () => {
     setToken(null)

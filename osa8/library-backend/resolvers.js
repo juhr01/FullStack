@@ -5,6 +5,7 @@ const { GraphQLError } = require('graphql')
 const jwt = require('jsonwebtoken')
 const { PubSub } = require('graphql-subscriptions')
 const pubsub = new PubSub()
+const config = require('./config')
 
 const resolvers = {
     Query: {

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ALL_BOOKS } from '../queries'
-import { useQuery, useSubscription } from '@apollo/client'
-import { BOOK_ADDED } from './queries'
+import { useQuery } from '@apollo/client'
 
 const Books = () => {
   const [selectedGenre, setSelectedGenre] = useState(null);
@@ -9,19 +8,6 @@ const Books = () => {
 
   const { loading, data } = useQuery(ALL_BOOKS, {
   });
-
-  useSubscription(BOOK_ADDED, {
-    onData: ({ data }) => {
-      const addedBook = data.data.bookAdded
-      notify(`${addedBook.title} added`)
-
-      client.cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
-        return {
-          allBooks: allBooks.concat(addedBook),
-        }
-      })
-    }
-  })
 
   useEffect(() => {
     if (!loading && data) {
