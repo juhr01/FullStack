@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "target": "ES2022",
         "noImplicitAny": true,
         "noImplicitReturns": true,
         "strictNullChecks": true,
