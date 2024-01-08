@@ -4,7 +4,7 @@ interface TotalContent {
 }
 
 const Total = (props: TotalContent) => {
-    return <p>{props.total} {props.count}</p>
+    return <p><strong>{props.total} {props.count}</strong></p>
 }
 
 export default Total
