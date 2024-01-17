@@ -1,4 +1,3 @@
-
 import { NewDiaryEntry, Weather, Visibility } from './types';
 
 const isString = (text: unknown): text is string => {
