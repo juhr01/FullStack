@@ -1,7 +1,7 @@
 import { DiaryEntry } from "../src/types";
 import toNewDiaryEntry from "../src/utils";
 
-const entries = [
+const data = [
   {
       "id": 1,
       "date": "2017-01-01",
@@ -32,7 +32,7 @@ const entries = [
   }
 ];
 
-const diaryEntries: DiaryEntry [] = entries.map(obj => {
+const diaryEntries: DiaryEntry [] = data.map(obj => {
 const object = toNewDiaryEntry(obj) as DiaryEntry;
 object.id = obj.id;
 return object;

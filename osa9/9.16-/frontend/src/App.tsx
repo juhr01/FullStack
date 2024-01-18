@@ -24,7 +24,7 @@ const App = () => {
   return (
     <>
       <div>
-      <h1>Diary entries</h1>
+      <h2>Diary entries</h2>
       {diaries.map(diary => 
         <div key={diary.id}>
           <h3>{diary.date}</h3>
