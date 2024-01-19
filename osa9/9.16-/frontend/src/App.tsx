@@ -16,15 +16,16 @@ const App = () => {
   const [weather, setWeather] = useState<Weather>(Weather.Sunny);
   const [visibility, setVisibility] = useState<Visibility>(Visibility.Great)
   const [comment, setComment] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
     axios.get<Diary[]>('http://localhost:3001/api/diaries').then(response => {
       setDiaries(response.data as Diary[])
-      console.log(diaries)
     })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const addDiary = (event: React.SyntheticEvent) => {
+  const addDiary = async (event: React.SyntheticEvent) => {
     event.preventDefault()
     const newDiary = {
       id: diaries.length + 1,
@@ -33,21 +34,38 @@ const App = () => {
       visibility: visibility as Visibility,
       comment
     }
-    console.log(newDiary)
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    axios.post<Diary>('http://localhost:3001/api/diaries', newDiary).then(response => {
-      setDiaries([...diaries, newDiary])
-    })
+    try {
+      const response =  await axios.post<Diary>('http://localhost:3001/api/diaries', newDiary)
+        setDiaries([...diaries, response.data])
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        // Axios error, handle accordingly
+        setErrorMessage(error.response?.data);
+      } else {
+        // Non-Axios error, handle accordingly
+        setErrorMessage('An error occurred');
+      }
+  
+      setTimeout(() => {
+        setErrorMessage('');
+      }, 4000);
+    }
+    
     setDate('')
     setVisibility(Visibility.Great)
     setWeather(Weather.Sunny)
     setComment('')
   }
 
+  const errorStyle = {
+    color: "red"
+  }
+
   return (
     <>
       <div>
+        {errorMessage && <p style={errorStyle}>{errorMessage}</p>}
         <form onSubmit={addDiary}>
           <h2>Add new diary</h2>
           <input id="date" type="date" value={date} onChange={({ target }) => setDate(target.value)}></input>
